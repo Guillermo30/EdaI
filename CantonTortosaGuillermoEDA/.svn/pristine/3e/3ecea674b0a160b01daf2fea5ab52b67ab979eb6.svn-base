@@ -1,0 +1,10 @@
+package org.eda1.practica01.ejercicio01;
+
+public class ProgramEditor {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

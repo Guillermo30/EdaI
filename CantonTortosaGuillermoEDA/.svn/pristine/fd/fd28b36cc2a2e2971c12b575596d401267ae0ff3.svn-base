@@ -1,0 +1,300 @@
+package org.eda1.practica01.ejercicio01;
+
+import java.util.*;
+
+public class Editor {
+	public final static char COMMAND_START = '$';
+	public final static char DELIMITER = '%';
+
+	public final static String INSERT_COMMAND = "$Insert";
+
+	public final static String DELETE_COMMAND = "$Delete";
+
+	public final static String LINE_COMMAND = "$Line";
+
+	public final static String DONE_COMMAND = "$Done";
+
+	public final static String LAST_COMMAND = "$Last";
+
+	public final static String GETLINES_COMMAND = "$GetLines";
+
+	public final static String CHANGE_COMMAND = "$Change";
+
+	public final static String BAD_LINE_MESSAGE = "Error: a command should start with "
+			+ COMMAND_START + ".\n";
+
+	public final static String BAD_COMMAND_MESSAGE = "Error: not one of the given commands.\n";
+
+	public final static String INTEGER_NEEDED = "Error: The command should be followed by a blank space, "
+			+ "\nfollowed by an integer.\n";
+
+	public final static String TWO_INTEGERS_NEEDED = "Error: The command should be followed by a blank space, "
+			+ "\nfollowed by an integer, followed by a blank space, "
+			+ "followed by an integer.\n";
+
+	public final static String FIRST_GREATER = "Error: the first line number is greater than the second.\n";
+
+	public final static String FIRST_LESS_THAN_ZERO = "Error: the first line number given is less than 0.\n";
+
+	public final static String SECOND_TOO_LARGE = "Error: the second line number given is greater than the "
+			+ "\nnumber of the last line in the text.\n";
+
+	public final static String M_LESS_THAN_ZERO = "Error: the number is less than 0.\n";
+
+	public final static String M_TOO_LARGE = "Error: the number is larger than the number of lines in the text.\n";
+
+	public final static String LINE_TOO_LONG = "Error: the line exceeds the maximum number of characters allowed, ";
+
+	public final static String INCORRECT_DELIMITERS_NUMBER = "Error: Delimiter must occur three times. Please try again.\n";
+
+	public final static String NO_DELIMITERS_BEGIN_END = "Error: Bad Expression format, delimiters should be at the beginning "
+			+ "\nand at the end. Please try again.\n";
+
+	public final static String TWO_CONSECUTIVE_DELIMITERS_AT_THE_BEGINNING = "Error: Bad Expression format, two consecutive delimiters "
+			+ "\nat the beginning. Please try again.\n";
+
+	public final static int MAX_LINE_LENGTH = 80;
+
+	protected LinkedList<String> text;
+
+	protected ListIterator<String> current;
+
+	protected boolean inserting;
+
+	// constructor
+	public Editor() {
+		text = new LinkedList<String>();
+		current = text.listIterator();
+		inserting = false;
+	}
+
+	// lee el comando a introducir
+
+	public String interpret(String s) throws RuntimeException {
+		String salida = "";
+		if (s.equals("") || ((s.charAt(0) != COMMAND_START) && this.inserting == false))
+			throw new RuntimeException(Editor.BAD_LINE_MESSAGE);
+		else {
+			if (s.equals(INSERT_COMMAND)) {
+				this.inserting = true;
+				return null;
+			}
+
+			else if (s.startsWith(DELETE_COMMAND)) {
+				this.inserting = false;
+				String[] limitadores = new String[3];
+				limitadores = s.split(" ");
+				int m = 0;
+				int n = 0;
+				try {
+					m = Integer.parseInt(limitadores[1]);
+					n = Integer.parseInt(limitadores[2]);
+				} catch (RuntimeException e) {
+					throw new RuntimeException(Editor.TWO_INTEGERS_NEEDED);
+				}
+
+				delete(m, n);
+			} else if (s.startsWith(LINE_COMMAND)) {
+				this.inserting = false;
+				String[] limitadores = new String[2];
+				limitadores = s.split(" ");
+				int m = 0;
+				try {
+					m = Integer.parseInt(limitadores[1]);
+				} catch (RuntimeException e) {
+					throw new RuntimeException(Editor.INTEGER_NEEDED);
+				}
+				if (m < 0)
+					throw new RuntimeException(Editor.FIRST_LESS_THAN_ZERO);
+				else if (m > this.text.size())
+					throw new RuntimeException(Editor.M_TOO_LARGE);
+				this.current = this.text.listIterator(m);
+				return null;
+
+			} else if (s.equals(DONE_COMMAND)) {
+				this.inserting = false;
+				return done();
+			} else if (s.equals(LAST_COMMAND)) {
+				this.inserting = false;
+				return last();
+			}
+
+			else if (s.startsWith(GETLINES_COMMAND)) {
+				this.inserting = false;
+				String[] limitadores = new String[3];
+				limitadores = s.split(" ");
+				int m = 0;
+				int n = 0;
+				try {
+					m = Integer.parseInt(limitadores[1]);
+					n = Integer.parseInt(limitadores[2]);
+				} catch (RuntimeException e) {
+					throw new RuntimeException(Editor.TWO_INTEGERS_NEEDED);
+				}
+				return getLines(m, n);
+			}
+
+			else if (s.startsWith(CHANGE_COMMAND)) {
+				this.inserting = true;
+				change(s);
+			} else if (this.inserting) {
+				insert(s);
+			} else {
+				throw new RuntimeException(Editor.BAD_COMMAND_MESSAGE);
+			}
+
+		}
+		return salida;
+
+	}
+
+	
+	protected void insert(String s) {
+		if (s.length() > Editor.MAX_LINE_LENGTH) {
+			throw new RuntimeException(Editor.LINE_TOO_LONG);
+		} else
+			this.current.add(s);
+	}
+
+	protected void delete(int m, int n) {
+		if (m > n)
+			throw new RuntimeException(Editor.FIRST_GREATER);
+		else if (m < 0)
+			throw new RuntimeException(Editor.FIRST_LESS_THAN_ZERO);
+		else if (n >= this.text.size())
+			throw new RuntimeException(Editor.SECOND_TOO_LARGE);
+		else {
+			for (int i = m; i <= n; i++) {
+				this.text.remove(m);
+				this.current = this.text.listIterator(m);
+			}
+
+		}
+	}
+
+	protected void setCurrentLineNumber(int m) {
+		try {
+			this.current = this.text.listIterator(m);
+		} catch (RuntimeException e) {
+			throw new RuntimeException(Editor.M_TOO_LARGE);
+		}
+
+	}
+
+	protected String done() {
+		String contenido = "";
+		boolean ultimoPuntero = false;
+
+		for (int i = 0; i < this.text.size(); i++) {
+
+			if (this.current.nextIndex() == i) {
+				contenido += ">  " + this.text.get(i) + "\n";
+				ultimoPuntero = true;
+			} else
+				contenido += "   " + this.text.get(i) + "\n";
+		}
+		if (!ultimoPuntero)
+			contenido += ">  \n";
+		return contenido;
+	}
+
+	protected String last(){
+		
+		String contenido="";
+		int posicion = text.size()-1;
+		
+		return contenido+=posicion;	
+	}
+	
+			
+		
+	
+
+
+	protected String getLines(int m, int n) {
+		String salida = "";
+		if (m > n)
+			throw new RuntimeException(Editor.FIRST_GREATER);
+		else if (m < 0)
+			throw new RuntimeException(Editor.FIRST_LESS_THAN_ZERO);
+		else if (n >= this.text.size())
+			throw new RuntimeException(Editor.SECOND_TOO_LARGE);
+		else {
+			for (int i = m; i <= n; i++) {
+				salida += i + "\t" + this.text.get(i);
+				if (i != n)
+					salida += "\n";
+			}
+		}
+
+		return salida;
+	}
+
+
+	protected void change(String parameter) {
+		String tratamientoErrores = parameter.replace("$Change ", "");
+		int numDelimitadores = 0;
+		for (int i = 0; i < tratamientoErrores.length(); i++)
+			if (tratamientoErrores.charAt(i) == '%')
+				numDelimitadores++;
+		if (numDelimitadores != 3)
+			throw new RuntimeException(Editor.INCORRECT_DELIMITERS_NUMBER); // testInterpretBadChange01
+		if (tratamientoErrores.charAt(tratamientoErrores.length() - 1) != '%')
+			throw new RuntimeException(Editor.NO_DELIMITERS_BEGIN_END); // testInterpretBadChange02
+		if (tratamientoErrores.charAt(0) == tratamientoErrores.charAt(1))
+			throw new RuntimeException(
+					Editor.TWO_CONSECUTIVE_DELIMITERS_AT_THE_BEGINNING); // testInterpretBadChange03
+
+		String[] limitadores = new String[3];
+		limitadores = parameter.split("%");
+		String buscado = "";
+		String remplazar = "";
+		if (limitadores.length == 2) {
+			buscado = limitadores[1];
+			remplazar = ""; // testChangeRemoveString
+		} else {
+			try {
+				buscado = limitadores[1];
+				remplazar = limitadores[2];
+			} catch (RuntimeException e) {
+				throw new RuntimeException(Editor.TWO_INTEGERS_NEEDED);
+			}
+		}
+		int puntero = this.current.nextIndex();
+		String cadenaAntes = this.text.get(puntero);
+		String cadenaProcesada = cadenaAntes.replace(buscado, remplazar);
+		delete(puntero, puntero);
+		insert(cadenaProcesada);
+		this.current = this.text.listIterator(puntero);
+	}
+	
+	protected void tryToDelete(Scanner entrada){
+		
+		
+		interpret(entrada.nextLine());
+		
+	}
+	
+	protected void tryToSetCurrentLineNumber(Scanner entrada){
+		
+		interpret(entrada.nextLine());
+		
+	}
+	
+	protected void tryToGetLines(Scanner entrada){
+		
+		interpret(entrada.nextLine());
+		
+		
+	}
+	
+	protected void tryToChange(Scanner entrada){
+		
+		interpret(entrada.nextLine());
+		
+		
+	}
+	
+	
+
+}

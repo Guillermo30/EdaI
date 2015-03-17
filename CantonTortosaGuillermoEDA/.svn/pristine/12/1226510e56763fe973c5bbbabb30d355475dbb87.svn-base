@@ -1,0 +1,59 @@
+package org.eda1.practica02.ejercicio03;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Principal {
+	public static void main(String[] args){
+		
+		ArrayList<String> aux = LeerFrase();
+		CorrectorOrtografico corrector = new CorrectorOrtografico();
+		
+		String diccionario = System.getProperty("user.dir") + File.separator +
+				"src" + File.separator + 
+				"org" + File.separator +
+				"eda1" + File.separator + 
+				"practica02" + File.separator +
+				"ejercicio03" + File.separator + "diccionario.txt";
+		corrector.cargarDiccionario(diccionario);
+		
+		while(!aux.contains("cerraPrograma")){
+			
+			for(int i=0; i<aux.size(); i++){
+				
+				if(!corrector.find(aux.get(i))){
+					
+					ArrayList<String> sugerencias = corrector.listaSugerencias(2, aux.get(i));
+					System.out.println("Las sugerencias para "+aux.get(i)+" son:");
+					for(int j=0; j<sugerencias.size(); j++){
+						
+						System.out.println(sugerencias.get(j));
+					}
+					
+				}else{
+					
+					System.out.println(aux.get(i)+" OK");
+				}
+			}
+			
+			aux = LeerFrase();
+		}
+	}
+	
+	public static ArrayList<String> LeerFrase(){
+		
+		ArrayList<String> resultado = new ArrayList<String>();
+		String entradaTeclado = "";
+        Scanner entradaEscaner = new Scanner (System.in);
+        entradaTeclado = entradaEscaner.nextLine ();
+        
+        for(int i=0; i<entradaTeclado.split(" ").length; i++){
+        	
+        	resultado.add(entradaTeclado.split(" ")[i]);
+        }
+        
+//        entradaEscaner.close();
+        return resultado;
+	}
+}

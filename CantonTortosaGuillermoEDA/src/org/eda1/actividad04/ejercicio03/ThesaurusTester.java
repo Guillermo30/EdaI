@@ -1,0 +1,99 @@
+package org.eda1.actividad04.ejercicio03;
+
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.TreeSet;
+
+public class ThesaurusTester {
+	
+	protected Thesaurus thesaurus;
+	
+	public ThesaurusTester(){
+		
+		this.thesaurus = new Thesaurus();
+	}
+	
+	public void constructThesaurus(String fileName){
+		
+		try{
+			
+			BufferedReader lector = new BufferedReader(new FileReader(fileName));
+			
+			while (lector.ready()){
+				
+				this.thesaurus.add(lector.readLine());
+				
+			}
+			
+			lector.close();
+		}
+		catch(IOException e){
+			System.out.println(e);
+		}
+	}
+	
+	public int size(){
+		
+		return this.thesaurus.size();
+	}
+	
+	public boolean isSynonymousOf(String word, String synonym){
+		
+		return this.thesaurus.isSynonymousOf(word, synonym);
+	}
+	
+	public boolean isSynonymous(String synonym){
+		
+		return this.thesaurus.isSynonymous(synonym);
+	}
+	
+	public boolean hasSynonymous(String word){
+		
+		return this.thesaurus.hasSynonymous(word);
+	}
+	
+	public int size(String word){
+		
+		return this.thesaurus.thesaurusMap.get(word).size();
+	}
+	
+	public TreeSet<String> getSynonymous(String word){
+		
+		return this.thesaurus.getSynonymous(word);
+	}
+	
+	public void add(String line){
+		
+		this.thesaurus.add(line);
+	}
+	
+	public void add(String word, String synonym){
+		
+		this.thesaurus.add(word,synonym);
+	}
+	
+	public TreeSet<String> remove(String word){
+		
+		return this.thesaurus.remove(word);
+	}
+	
+	public boolean remove(String word, String synonym){
+		
+		return this.thesaurus.remove(word, synonym);
+	}
+	public TreeSet<String> update(String word, LinkedList<String> synonyms){
+		
+		return this.thesaurus.update(word, synonyms);
+	}
+	public String showThesaurus(){
+		
+		return this.thesaurus.showThesaurus();
+	}
+	public void printSynonymous(){
+		
+		System.out.println(showThesaurus());
+	}
+}

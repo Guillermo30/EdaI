@@ -1,0 +1,229 @@
+package org.eda1.practica03.ejercicio01;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.TreeMap;
+import java.util.Iterator;
+import org.eda1.utilidades.Less;
+
+public class ProcesarDirecciones {
+	
+	TreeMap<String, TreeMap<String, Integer>> mapa;
+	
+	public ProcesarDirecciones(){
+		
+		this.mapa = new TreeMap<String, TreeMap<String, Integer>>(new Less<String>());
+	}
+	
+	public void cargarArchivo(String archivo){
+		
+		try{
+			
+			BufferedReader bf = new BufferedReader(new FileReader(archivo));
+			
+			while (bf.ready()){
+				
+				String linea = bf.readLine();
+				String [] lineaTroceada = linea.split(" ");
+				
+				if(this.mapa.containsKey(lineaTroceada[0])){
+					
+					if(this.mapa.get(lineaTroceada[0]).containsKey(lineaTroceada[1])){ 
+						
+						Integer acceso = this.mapa.get(lineaTroceada[0]).get(lineaTroceada[1]);
+						this.mapa.get(lineaTroceada[0]).put(lineaTroceada[1], acceso+1); 
+						
+					}else{
+						
+						this.mapa.get(lineaTroceada[0]).put(lineaTroceada[1], 1);
+					}
+					
+				}else{
+					
+					this.mapa.put(lineaTroceada[0], new TreeMap<String, Integer>(new Less<String>()));
+					this.mapa.get(lineaTroceada[0]).put(lineaTroceada[1], 1);
+					
+				}
+			}
+			bf.close();
+		}
+		catch(IOException e){
+			System.out.println(e);
+		}
+	}
+	
+	public int tamano(){
+		
+		return this.mapa.size();
+	}
+	
+	public void generarDirecciones(String archivo){
+		
+		try{
+			
+			File archivoEntradas = new File(archivo);
+			PrintWriter pw = new PrintWriter(archivoEntradas);
+			Iterator<String> iterIP = this.mapa.keySet().iterator();
+			
+			while(iterIP.hasNext()){
+				
+				String ip = iterIP.next();
+				pw.print(ip +" => {");
+				Iterator<String> iteradorM = this.mapa.get(ip).keySet().iterator();
+				
+				while(iteradorM.hasNext()){
+					
+					String nombreM = iteradorM.next();
+					pw.print(nombreM+"="+this.mapa.get(ip).get(nombreM));
+					
+					if(iteradorM.hasNext())
+						pw.print(", ");
+				}
+				pw.print("}\n");
+			}
+			pw.close();
+		}
+		catch(IOException e){
+			System.out.println(e.getMessage());
+		}
+		
+	}
+	
+	public void mostrarDirecciones(){
+		
+		Iterator<String> iterIP = this.mapa.keySet().iterator();
+		
+		while(iterIP.hasNext()){
+			System.out.println(iterIP.next());
+		}
+	}
+	
+	public void generarIncidencias(String archivo){
+		
+		try{
+			
+			File archivoEntradas = new File(archivo);
+			PrintWriter pw = new PrintWriter(archivoEntradas);
+			Iterator<String> iterIP = this.mapa.keySet().iterator();
+			
+			while(iterIP.hasNext()){
+				
+				String ip = iterIP.next();
+				
+				if(this.mapa.get(ip).size()>1){ 
+					
+					pw.print(ip +" => {");
+					Iterator<String> iterMaq = this.mapa.get(ip).keySet().iterator();
+					
+					while(iterMaq.hasNext()){
+						
+						String nombMaq = iterMaq.next();
+						
+						pw.print(nombMaq+"="+this.mapa.get(ip).get(nombMaq));
+						if(iterMaq.hasNext())
+							pw.print(", ");
+					}
+					pw.print("}\n");
+				}
+			}
+			pw.close();
+		}
+		catch(IOException e){
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public void mostrarIncidencias(){
+		
+		Iterator<String> iterIP = this.mapa.keySet().iterator();
+		Iterator<String> iterM = this.mapa.get(iterIP.next()).keySet().iterator();
+
+		while(iterIP.hasNext()){
+			
+			while(iterM.hasNext()){
+				
+			System.out.println(iterM.next());
+			}
+		}
+		
+	}
+	
+	public ArrayList<String> maquinasConContadorMayorQue(int c){
+		
+		ArrayList<String> salida = new ArrayList<String>();
+		Iterator<String> iterIP = this.mapa.keySet().iterator();
+		
+		while(iterIP.hasNext()){
+			
+			String ip = iterIP.next();
+			Iterator<String> iterM = this.mapa.get(ip).keySet().iterator();
+			
+			while(iterM.hasNext()){
+				
+				String nombreM = iterM.next();
+				
+				if(this.mapa.get(ip).get(nombreM)>c)
+					salida.add(nombreM);
+			}
+		}
+		return salida;
+	}
+	
+	public int maquinasConContadorIgualA(int c){
+		
+		int salida=0;
+		Iterator<String> iterIP = this.mapa.keySet().iterator();
+		
+		while(iterIP.hasNext()){
+			
+			String ip = iterIP.next();
+			Iterator<String> iterM = this.mapa.get(ip).keySet().iterator();
+			
+			while(iterM.hasNext()){
+				
+				String nombreM = iterM.next();
+				if(this.mapa.get(ip).get(nombreM)==c)
+					salida++;
+			}
+		}
+		return salida;
+	}
+	
+	public int valorContador(String direccion, String maquina){
+		
+		return this.mapa.get(direccion).get(maquina);
+	}
+	
+	public ArrayList<String> incidenciasGeneradasPor(String direccion){
+		
+		ArrayList<String> salida = new ArrayList<String>();
+		Iterator<String> iterIP = this.mapa.keySet().iterator();
+		
+		while(iterIP.hasNext()){
+			
+			String ip = iterIP.next();
+			
+			if(ip.equals(direccion)){
+				
+				Iterator<String> iterM = this.mapa.get(ip).keySet().iterator();
+				
+				while(iterM.hasNext()){
+					
+					String nombreM = iterM.next();
+					salida.add(nombreM);
+				}
+			}
+		}
+		return salida;
+	}
+	
+	public int numeroDeIncidenciasGeneradasPor(String direccion){
+		
+		return this.mapa.get(direccion).size();
+	}
+	
+}

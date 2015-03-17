@@ -1,0 +1,74 @@
+package org.eda1.practica02.ejercicio02;
+
+import org.eda1.estructurasdedatos.*;
+
+public class ProyectoCiudades implements Comparable<Object>{
+	
+	private String proyecto;
+	private AVLTree<String> ciudades;
+	
+	public ProyectoCiudades(){
+		this.proyecto = "";
+		this.ciudades = new AVLTree<String>();
+	}
+	
+	public ProyectoCiudades(String proy){
+		this.proyecto = proy;
+		this.ciudades = new AVLTree<String>();
+	}
+	public ProyectoCiudades(String proy, String ciudad){
+		this.proyecto = proy;
+		this.ciudades = new AVLTree<String>();
+		this.ciudades.add(ciudad);
+	}
+	public void setProyecto(String proy){
+		this.proyecto = proy;
+	}
+	
+	public String getProyecto(){
+		return this.proyecto;
+	}
+	
+	public boolean addCiudad(String ciudad){
+		String encontrado = this.ciudades.find(ciudad);
+		if(encontrado == null){
+			return this.ciudades.add(ciudad);
+		}else{
+			return false;
+		}
+	}
+	
+	public AVLTree<String> getCiudades(){
+		AVLTree<String> resultado = new AVLTree<String>();
+		Iterator<String> ite = this.ciudades.iterator();
+		while(ite.hasNext()){
+			resultado.add(ite.next());
+		}
+		return resultado;
+	}
+	
+	public String getCiudad(int index){
+		String[] aux = (String[])this.ciudades.toArray();
+		return aux[index];
+	}
+	
+	public int size(){
+		return this.ciudades.size();
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		ProyectoCiudades aux = (ProyectoCiudades) o;
+		return this.proyecto.compareTo(aux.proyecto);
+	}
+	public String toString(){
+		String cadena=this.proyecto+"<";
+		Iterator<String> ite = this.ciudades.iterator();
+		while(ite.hasNext()){
+			cadena += ite.next();
+			if(ite.hasNext())cadena+=", ";
+		}
+		cadena+=">";
+		return cadena;
+	}
+}

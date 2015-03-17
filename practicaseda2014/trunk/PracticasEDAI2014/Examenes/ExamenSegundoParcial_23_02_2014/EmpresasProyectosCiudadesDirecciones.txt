@@ -1,0 +1,16 @@
+Apple iWork Chicago USA America 7th_Avenue Love_Street Sant_John Devon_Avenue Michigan_Avenue
+Microsoft PowerPoint Paris France Europe Champs_Elysees Passy Montaigne Haussmann
+Oracle Solaris Berkeley USA America 4th_Avenue Park_Avenue
+Adobe Photoshop Madrid Spain Europe Chamartin Serrano Velazquez Juan_Bravo Castellana Gran_Via
+Apple IOS New_York USA America Times_Square Wall_Street Atlantic_Avenue
+Microsoft Word Washington USA America Seventh_Street Pennsylvania_Avenue
+Borland Delphi Los_Angeles USA America Highland_Avenue Hill_Street Avalon_Boulevard
+Oracle Java London UK Europe Harley_Street Fleet_Street
+Google Chrome New_York USA America Lexington_Avenue Madison_Avenue Wall_Street
+Microsoft OutLook Miami USA America NW_7th_Street W_Flager_Street
+Apple Xcode Los_Angeles USA America Rodeo_Drive Broadway Sunset_Boulevard Hill_Street
+Microsoft Excel Seattle USA America 16th_Avenue Military_Road International_Boulevard
+Oracle Database_11g Miami USA America Lincoln_Road NW_7th_Street SW_12th_Avenue
+Apple Mavericks Berlin Germany Europe Alexanderplatz Kurfurstendamm Unter_den_Linden
+Borland JBuilder New_York USA America Wall_Street 8th_Avenue 5th_Avenue
+Oracle Java Barcelona Spain Europe La_Rambla Bergara

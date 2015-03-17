@@ -1,0 +1,145 @@
+package org.eda1.actividadesSeptiembre.actividad03;
+
+public class HashTableExponentProbing<T> {
+
+	private static final int DEFAULT_TABLE_SIZE = 71;
+	private final double MAX_LOAD_FACTOR = .5;
+	private HashEntry<T>[]table;
+	private int occupiedEntries; 
+	private int hashTableSize; 
+	private int tableThreshold;
+	private int numberOfCollisions;
+	private int exponent;
+	
+	public HashTableExponentProbing() {
+		this(DEFAULT_TABLE_SIZE);
+	}
+	
+	public HashTableExponentProbing(int exp) {
+		// TODO Auto-generated constructor stub
+		allocateTable(DEFAULT_TABLE_SIZE);
+		occupiedEntries = 0;
+		hashTableSize = 0;
+		tableThreshold = (int) (table.length * MAX_LOAD_FACTOR);
+		numberOfCollisions = 0;
+		exponent = exp;
+		for (int i = 0; i < table.length; i++)
+			table[i] = null;
+	}
+
+	public boolean add(T item) {
+		
+		int index = (item.hashCode() & Integer.MAX_VALUE) % table.length;
+		
+		// find the item and return false if item is in the ArrayList
+		if(!(table[index]==null)){
+				numberOfCollisions++;
+				return false;
+				
+		}else{
+			table[index]=new HashEntry(item);
+		}
+		
+		
+		
+		// we will add item, so increment modCount
+		occupiedEntries++;
+
+		hashTableSize++;
+		
+		if (hashTableSize >= tableThreshold)
+			rehash(2 * table.length + 1);
+
+		return true;
+	}
+	
+	private void rehash(int newTableSizeRehash) {
+		// allocate the new hash table and record a reference
+		// to the current one in oldTable
+		int newTableSize = nextPrime(newTableSizeRehash);
+		HashEntry<T> [] newTable = new HashEntry[newTableSize];	
+		HashEntry<T> [] oldTable = table;
+
+		int index;
+		
+		// cycle through the current hash table
+		for (int i = 0; i < table.length; i++) {
+			// see if there is a linked list present
+			if (table[i] != null) {
+				
+				HashEntry<T> currItem;
+				currItem= table[i];
+				
+					index = (currItem.hashCode() & Integer.MAX_VALUE) % newTableSize;
+					
+					newTable[index]=currItem;
+				
+			}
+		}
+
+		// the table is now newTable
+		table = newTable;
+		// update the table threshold
+		tableThreshold = (int)(table.length * MAX_LOAD_FACTOR);
+		// let garbage collection get rid of oldTable
+		oldTable = null;
+	}
+
+	public int capacity() {
+		// TODO Auto-generated method stub
+		return table.length; 
+	}
+
+	public int getNumberOfCollisions() {
+		// TODO Auto-generated method stub
+		return numberOfCollisions;
+	}
+	
+	public int numberOfOccupiedEntries() {
+		return occupiedEntries; 
+	}
+	
+	private int myHash(T x) {
+		int hashVal = (x.hashCode() & Integer.MAX_VALUE) % table.length;
+		if (hashVal < 0)
+		hashVal += table.length;
+		return hashVal;
+	}
+	
+	private void allocateTable(int tableSize){
+		table = new HashEntry[nextPrime(tableSize)]; 
+	}
+	
+	private static int nextPrime(int n) {
+		if (n % 2 == 0)
+		n++;
+		for(; !isPrime(n); n += 2)
+		;
+		return n;
+	}
+	
+	private static boolean isPrime(int n) {
+		if (n == 2 || n == 3)
+			return true;
+		if (n == 1 || n % 2 == 0)
+			return false;
+		for (int i = 3; i * i <= n; i += 2)
+			if (n % i == 0)
+				return false;
+		return true;
+	}
+	
+	private static class HashEntry<T> {
+		public T element; 
+		public boolean isActive; 
+		
+		public HashEntry(T e) {
+			this(e, true);
+		}
+
+		public HashEntry(T e, boolean i) {
+			element = e;
+			isActive = i;
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+  "C:\\Users\\Guillermo\\Desktop\\GIPP2014EclipseKeplerV3\\JDKS\\jdk1.7.0\\jre\\lib\\rt.jar": {
+    "coordinate": "jre:jre:zip:call:1.0.0",
+    "location": "C:\\Users\\Guillermo\\Desktop\\GIPP2014EclipseKeplerV3\\JDKS\\jdk1.7.0\\jre\\lib\\rt.jar",
+    "status": "RESOLVED",
+    "error": "No call model found for \u0027C:\\Users\\Guillermo\\Desktop\\GIPP2014EclipseKeplerV3\\JDKS\\jdk1.7.0\\jre\\lib\\rt.jar\u0027. Neither fingerprint \u0027f2c64dd501da5d29ab778951c1975683b88f278d\u0027 nor symbolic name \u0027jre\u0027 are known."
+  },
+  "C:\\Users\\Guillermo\\Desktop\\Grado Informática\\WORKSPACES\\EdaI\\CantonTortosaGuillermoEDA\\src": {
+    "location": "C:\\Users\\Guillermo\\Desktop\\Grado Informática\\WORKSPACES\\EdaI\\CantonTortosaGuillermoEDA\\src",
+    "status": "UNRESOLVED",
+    "error": "No class path info available for \u0027C:\\Users\\Guillermo\\Desktop\\Grado Informática\\WORKSPACES\\EdaI\\CantonTortosaGuillermoEDA\\src\u0027. Skipped."
+  },
+  "E:\\GIPP2014EclipseKeplerV3\\JDKS\\jdk1.7.0\\jre\\lib\\rt.jar": {
+    "coordinate": "jre:jre:zip:call:1.0.0",
+    "location": "E:\\GIPP2014EclipseKeplerV3\\JDKS\\jdk1.7.0\\jre\\lib\\rt.jar",
+    "status": "RESOLVED"
+  },
+  "E:\\Drive UAL\\Grado Informática\\WORKSPACES\\EdaI\\CantonTortosaGuillermoEDA\\src": {
+    "location": "E:\\Drive UAL\\Grado Informática\\WORKSPACES\\EdaI\\CantonTortosaGuillermoEDA\\src",
+    "status": "UNRESOLVED",
+    "error": "No class path info available for \u0027E:\\Drive UAL\\Grado Informática\\WORKSPACES\\EdaI\\CantonTortosaGuillermoEDA\\src\u0027. Skipped."
+  }
+}

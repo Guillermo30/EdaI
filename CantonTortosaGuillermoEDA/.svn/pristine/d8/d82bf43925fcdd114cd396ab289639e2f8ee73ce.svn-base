@@ -1,0 +1,10 @@
+package org.eda1.practica02.ejercicio03;
+
+import java.util.Comparator;
+
+public class DistanceComparator implements Comparator<PalabraDistancia>{
+	public int compare(PalabraDistancia x, PalabraDistancia y){
+		CorrectorOrtografico aux = new CorrectorOrtografico();
+		return aux.computeLevenshteinDistance(x.getPalabra(), y.getPalabra());
+	}
+}

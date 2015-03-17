@@ -1,0 +1,647 @@
+package org.eda1.actividad05;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+
+import org.eda1.estructurasdedatos.ALStack;
+import org.eda1.estructurasdedatos.AVLTree;
+import org.eda1.estructurasdedatos.Graph;
+import org.eda1.estructurasdedatos.LinkedQueue;
+import org.eda1.practica02.ejercicio02.EmpresaProyectos;
+import org.eda1.practica02.ejercicio02.ProyectoCiudades;
+
+public class Network<Vertex> implements Graph<Vertex>, Iterable<Vertex> {
+
+	protected boolean directed; 	// directed = false (unDirected), directed = true (DiGraph)
+
+	protected TreeMap<Vertex, TreeMap<Vertex, Double>> adjacencyMap;
+
+	protected TreeMap<Vertex, Boolean> visited;
+
+	protected ArrayList<Vertex> result;
+
+	protected ArrayList<ArrayList<Vertex>> resultSimplePaths;
+
+	Double shortestPathWeight;
+	protected ArrayList<Vertex> resultShortestPath;
+
+	int largestLengthPath;
+	protected ArrayList<Vertex> resultLargestLengthPath;
+
+	int numberOfSimplePaths, sumOfLengthOfSimplePaths;
+
+
+  	/**
+   	 *  Initialized this Network object to be empty.
+   	 */
+  	public Network() {
+  		directed = true;
+    	adjacencyMap = new TreeMap<Vertex, TreeMap<Vertex, Double>>();
+  	} // default constructor
+
+  	public Network(boolean uDOrD) {
+  		directed = uDOrD;
+		adjacencyMap = new TreeMap<Vertex, TreeMap<Vertex, Double>>();
+	} // default constructor
+
+  	/**
+   	 *  Initializes this Network object to a shallow copy of a specified Network
+   	 *  object.
+   	 *  The averageTime(V, E) is O(V + E).
+   	 *
+   	 *  @param network - the Network object that this Network object is
+	 *                                 initialized to a shallow copy of.
+  	 *
+  	 */
+  	public Network(Network<Vertex> network) {
+  		this.directed = network.directed;
+    	this.adjacencyMap = new TreeMap<Vertex, TreeMap<Vertex, Double>>(network.adjacencyMap);
+  	} // copy constructor
+
+  	public void setDirected(boolean uDOrD) {
+  		directed = uDOrD;
+  	}
+
+  	public boolean getDirected() {
+  		return directed;
+  	}
+
+
+  	/**
+ 	 *  Determines if this Network object contains no vertices.
+  	 *
+  	 *  @return true - if this Network object contains no vertices.
+  	 *
+  	 */
+  	public boolean isEmpty() {
+    	return adjacencyMap.isEmpty();
+  	} // method isEmpty
+
+
+  	/**
+  	 *  Determines the number of vertices in this Network object.
+  	 *
+  	 *  @return the number of vertices in this Network object.
+  	 *
+  	 */
+  	public int numberOfVertices() {
+    	return adjacencyMap.size();
+  	} // method size
+
+
+  	/**
+  	 *  Returns the number of edges in this Network object.
+  	 *  The averageTime (V, E) is O (V).
+  	 *
+  	 *  @return the number of edges in this Network object.
+  	 *
+  	 */
+  	public int numberOfEdges() {
+  		int count = 0;
+  		for (Map.Entry<Vertex, TreeMap<Vertex, Double>> entry : adjacencyMap.entrySet())
+  			count += entry.getValue().size();
+  		return count;
+  	} // method getEdgeCount
+
+
+	public void clear() {
+		adjacencyMap.clear();
+	}
+
+  	public double getWeight(Vertex v1, Vertex v2) {
+    		if (! (adjacencyMap.containsKey(v1) && adjacencyMap.get(v1).containsKey(v2)))
+      			return -1.0;
+
+    		return adjacencyMap.get(v1).get(v2);
+   	} // method getWeight
+
+  	public double setWeight(Vertex v1, Vertex v2, double w) {
+		if (! (adjacencyMap.containsKey (v1) && adjacencyMap.get(v1).containsKey(v2)))
+  			return -1.0;
+
+		TreeMap<Vertex, Double> neighborMap = adjacencyMap.get(v1);
+		double oldWeight = neighborMap.get(v2);
+		adjacencyMap.get(v1).put(v2, w);
+		return oldWeight;
+	}
+
+
+  	/**
+  	 *  Determines if this Network object contains a specified Vertex object.
+  	 *
+  	 *  @param vertex - the Vertex object whose presence is sought.
+  	 *
+  	 *  @return true - if vertex is an element of this Network object.
+  	 */
+  	public boolean containsVertex(Vertex vertex) {
+    	return adjacencyMap.containsKey(vertex);
+  	} // method containsVertex
+
+
+  	/**
+  	 *  Determines if this Network object contains an edge specified by two vertices.
+  	 *  The averageTime (V, E) is O (E / V).
+  	 *
+  	 *  @param v1 - the beginning Vertex object of the edge sought.
+  	 *  @param v2 - the ending Vertex object of the edge sought.
+  	 *
+  	 *  @return true - if this Network object contains the edge <v1, v2>.
+  	 *
+  	 */
+  	public boolean containsEdge(Vertex v1, Vertex v2) {
+    	if (adjacencyMap.containsKey(v1) && adjacencyMap.get(v1).containsKey(v2))
+      		return true;
+    	else
+    		return false;
+  	} // method containsEdge
+
+
+  	/**
+  	 *  Ensures that a specified Vertex object is an element of this Network object.
+  	 *
+  	 *  @param vertex - the Vertex object whose presence is ensured.
+  	 *
+  	 *  @return true - if vertex was added to this Network object by this call; returns
+  	 *               false if vertex was already an element of this Network object when
+  	 *               this call was made.
+  	 */
+  	public boolean addVertex(Vertex vertex) {
+        if (adjacencyMap.containsKey(vertex))
+            return false;
+        adjacencyMap.put(vertex, new TreeMap<Vertex, Double>());
+        	return true;
+  	} // method addVertex
+
+
+  	/**
+  	 *  Ensures that an edge is in this Network object.
+  	 *
+  	 *  @param v1 - the beginning Vertex object of the edge whose presence
+  	 *                         is ensured.
+  	 *  @param v2 - the ending Vertex object of the edge whose presence is
+  	 *                        ensured.
+  	 *  @param weight - the weight of the edge whose presence is ensured.
+  	 *
+  	 *  @return true - if the given edge (and weight) were added to this Network
+  	 *                         object by this call; return false, if the given edge (and weight)
+  	 *                         were already in this Network object when this call was made.
+  	 *
+  	 */
+  	public boolean addEdge(Vertex v1, Vertex v2, double w) {
+    	addVertex(v1);
+    	addVertex(v2);
+    	adjacencyMap.get(v1).put(v2, w);
+    	if (!directed)
+        	adjacencyMap.get(v2).put(v1, w);
+    	return true;
+  	} // method addEdge
+
+
+  	/**
+  	 *  Ensures that a specified Vertex object is not an element of this Network object.
+  	 *  The averageTime (V, E) is O (V + E).
+  	 *
+  	 *  @param vertex - the Vertex object whose absence is ensured.
+  	 *
+  	 *  @return true - if vertex was removed from this Network object by this call;
+  	 *                returns false if vertex was not an element of this Network object
+  	 *                when this call was made.
+         *
+	 */
+  	public boolean removeVertex(Vertex vertex) {
+        if (!adjacencyMap.containsKey(vertex))
+            return false;
+
+        for (Map.Entry<Vertex, TreeMap<Vertex, Double>> entry: adjacencyMap.entrySet()) {
+        	TreeMap<Vertex, Double> neighborMap = entry.getValue();
+        	neighborMap.remove(vertex);
+        } // for each vertex in the network
+        adjacencyMap.remove(vertex);
+        return true;
+   	} // removeVertex
+
+
+  	/**
+   	 *  Ensures that an edge specified by two vertices is absent from this Network
+   	 *  object.
+   	 *  The averageTime (V, E) is O (E / V).
+   	 *
+   	 *  @param v1 - the beginning Vertex object of the edge whose absence is
+   	 *                          ensured.
+   	 *  @param v2 - the ending Vertex object of the edge whose absence is
+   	 *                        ensured.
+   	 *
+   	 *  @return true - if the edge <v1, v2> was removed from this Network object
+   	 *                          by this call; return false if the edge <v1, v2> was not in this
+   	 *                          Network object when this call was made.
+    	 *
+   	 */
+  	public boolean removeEdge(Vertex v1, Vertex v2) {
+    	if (!adjacencyMap.containsKey(v1) || !adjacencyMap.get(v1).containsKey(v2))
+	      	return false;
+
+    	TreeMap<Vertex, Double> neighborMap = adjacencyMap.get(v1);
+    	neighborMap.remove(v2);
+    	if (!directed) {
+        	TreeMap<Vertex, Double> neighborMapV2 = adjacencyMap.get(v2);
+        	neighborMapV2.remove(v1);
+    	}
+    	return true;
+  	} // method removeEdge
+
+
+  	public Set<Vertex> vertexSet() {
+    	return adjacencyMap.keySet();
+  	}
+
+  	public Set<Vertex> getNeighbors(Vertex v) {
+    	TreeSet<Vertex> neighbors = new TreeSet<Vertex>();
+    	if (adjacencyMap.containsKey(v)) {
+    		TreeMap<Vertex, Double> neighborMap = adjacencyMap.get(v);
+        	for (Map.Entry<Vertex, Double> entry : neighborMap.entrySet()) {
+        		neighbors.add(entry.getKey());
+        	}
+    	}
+    	return neighbors;
+  	}
+
+  	/**
+  	 *  Returns a String representation of this Network object.
+  	 *  The averageTime(V, E) is O(V + E).
+  	 *
+  	 *  @return a String representation of this Network object.
+  	 *
+  	 */
+  	public String toString() {
+    	return adjacencyMap.toString();
+  	} // method toString
+
+	/**
+	 * Builds a graph whose vertices are strings by reading the
+	 * vertices and edges from the textfile <tt>filename</tt>. The format
+	 * of the file is <code>
+	 *     nVertices
+	 *     vertex_1 vertex_2 ...vertex_n
+	 *     nEdges
+	 *     vertex_i vertex_j weight
+	 *     . . .  </code>         ...
+	 * @param filename name of the text file with vertex and edge specifications.
+	 * @return <tt>DiGraph</tt> object with generic type String.
+	 */
+	public static Network<String> readNetwork(String filename) throws FileNotFoundException {
+		// type of Graph
+		int typeOfGraph;
+		// nVertices is number of vertices to read
+		int i, nVertices, nEdges;
+		// use for input of vertices (v1) and edges ( {v1, v2} )
+		String v1, v2;
+		// edge weight
+		double weight;
+		Network<String> net = new Network<String>();
+
+        // READ THE FILE ACCORDING TO THE SPECIFIED FORMAT
+        // ...
+
+		return net;
+	}
+
+	public void showNetwork() {
+    	for (Map.Entry<Vertex, TreeMap<Vertex, Double>> e1 : adjacencyMap.entrySet()) {
+    		TreeMap<Vertex, Double> neighborMap = e1.getValue();
+        	for (Map.Entry<Vertex, Double> e2 : neighborMap.entrySet()) {
+				System.out.println(e1.getKey() + " " + e2.getKey() + " " + e2.getValue());
+        	}
+    	}
+	}
+
+    // IMPLEMENT THE EXERCISES SUGGESTED AT THE ACTTIVITY 05
+    // ...
+
+  	public Iterator<Vertex> iterator() {
+        return adjacencyMap.keySet().iterator();
+  	}
+
+  	public BreadthFirstIterator breadthFirstIterator(Vertex v) {
+    	if (!adjacencyMap.containsKey(v))
+      		return null;
+    	return new BreadthFirstIterator(v);
+  	}
+
+  	public DepthFirstIterator depthFirstIterator(Vertex v) {
+    	if (!adjacencyMap.containsKey (v))
+      		return null;
+    	return new DepthFirstIterator(v);
+  	}
+
+  	protected class BreadthFirstIterator implements Iterator<Vertex> {
+    	protected LinkedQueue<Vertex> queue;
+
+    	protected TreeMap<Vertex, Boolean> reached;
+
+    	protected Vertex current;
+
+    	public BreadthFirstIterator(Vertex start) {
+      		queue = new LinkedQueue<Vertex>();
+
+      		reached = new TreeMap<Vertex, Boolean>();
+
+      		Iterator<Vertex> itr = adjacencyMap.keySet().iterator();
+      		while (itr.hasNext())
+        		reached.put (itr.next(), false);
+
+      		queue.push(start);
+      		reached.put(start, true);
+    	}
+
+
+    	public boolean hasNext() {
+      		return !(queue.isEmpty());
+    	}
+
+
+    	public Vertex next() {
+      		Vertex to;
+
+      		current = queue.pop();
+
+      		TreeMap<Vertex, Double> neighborMap = adjacencyMap.get(current);
+            for (Map.Entry<Vertex, Double> entry : neighborMap.entrySet()) {
+            	to = entry.getKey();
+
+        		if (!reached.get(to)) {
+          			reached.put(to, true);
+          			queue.push(to);
+        		}
+      		}
+      		return current;
+    	}
+
+
+    	public void remove() {
+      		removeVertex(current);
+    	}
+
+  	}
+
+  	protected class DepthFirstIterator implements Iterator<Vertex> {
+    	ALStack<Vertex> stack;
+
+    	TreeMap<Vertex, Boolean> reached;
+
+    	Vertex current;
+
+    	public DepthFirstIterator(Vertex start) {
+      		stack = new ALStack<Vertex>();
+
+      		reached = new TreeMap<Vertex, Boolean>();
+
+      		Iterator<Vertex> itr = adjacencyMap.keySet().iterator();
+      		while (itr.hasNext())
+        		reached.put(itr.next(), false);
+
+      		stack.push(start);
+      		reached.put(start, true);
+    	}
+
+    	public boolean hasNext() {
+      		return !(stack.isEmpty());
+    	}
+
+    	public Vertex next() {
+      		Vertex to;
+
+      		current = stack.pop();
+
+          	TreeMap<Vertex, Double> neighborMap = adjacencyMap.get(current);
+            for (Map.Entry<Vertex, Double> entry : neighborMap.entrySet()) {
+                to = entry.getKey();
+
+        		if (!reached.get(to)) {
+          			reached.put(to, true);
+          			stack.push(to);
+        		}
+      		}
+      		return current;
+    	}
+    	
+    	
+
+    	public void remove() {
+      		Network.this.removeVertex(current);
+    	}
+    	//Actividad ///////////////////////
+    	//////////////
+    	/**
+    	 * Cosnulta el grado de entrada du un vertice dado.
+    	 *@param v vertice dado
+    	 *@return
+    	 */
+    	public int inDegree(Vertex v){
+    		return 5;
+    	}
+    	/**
+    	 * Cosnulta el grado de salida du un vertice dado.
+    	 *@param v vertice dado
+    	 *@return
+    	 */
+    	public int outDegree(Vertex v){
+    		return 6;
+    	}
+    	
+    	/**
+    	 * Comprueva si  es alcanzable desde otro vertice dado.
+    	 *@param v vertice dado
+    	 *@return
+    	 */
+    	public boolean isReachable(Vertex source, Vertex destination) {
+    		
+    	}
+    	private boolean isReachableAux(Vertex current, Vertex destination) { 
+    		
+    	}
+    	
+    	/**
+    	 * Leer archivo de texto y lo combierte en una estructura graph.
+    	 *@param  file name nombre del archivo.
+    	 *@return
+    	 */
+    	public static Network<String> readNetwork(String filename) throws FileNotFoundException {
+    		
+    		try {
+    			
+    			FileReader fr = new FileReader(new File(filename));
+    			BufferedReader br = new BufferedReader(fr);
+    			Network netSt = new Network();
+    		
+    				while(br.ready()){
+    					do (int i=0;br.ready();i++){
+  
+    						if(i==0){
+    							
+    						}
+    							String grafDirigido = br.readLine();
+    					}
+    						
+    					
+    				}
+    		
+    				br.close();
+    				fr.close();
+    				
+    				
+    			
+    			
+    		} catch (FileNotFoundException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+    		return netSt;	
+    	}
+    	/**
+    	 * Comprueva si  el vertice dados es fuente es decir, si es un vértice del que sólo salen aristas. No se puede hacer uso de la función inDegree, ya que un vértice fuente es aquél con grado de entrada igual a cero.
+    	 *@param v vertice dado
+    	 *@return
+    	 */
+    	public boolean isSource(Vertex v) {
+    		
+    	}
+    	
+    	/**
+    	 *Comprobar si un vértice es un sumidero (es decir, un vértice al que sólo llegan aristas) al que llegan aristas de todos los demás vértices del grafo. No se puede hacer uso de la función outDegree, ya que un vértice sumidero es aquél con grado de salida igual a cero. 
+    	 *@param v vertice dado
+    	 *@return
+    	 */
+    	public boolean isSink(Vertex v) {
+    		
+    	}
+    	
+    	/**
+    	 *Implementar una función que dado un grafo (Network) con la estructura descrita anteriormente, y dos vértices de dicho grafo, muestre todos los posibles caminos simples de un vértice a otro. Recuerde que un camino simple es aquel en el que todos los vértices son distintos (excepto el primero y el último que pueden ser iguales).
+    	 *@param v vertice dado
+    	 *@return
+    	 */
+    	public ArrayList<ArrayList<Vertex>> simplePaths(Vertex source, Vertex destination) {
+    		
+    	}
+    	private void simplePathsAux(Vertex current, Vertex destination) { 
+    		
+    	}
+    	
+    	/**
+    	 *Implementar una función para obtener en un ArrayList de vértices, los vértices que se visitan siguiendo un recorrido en profundidad (Depth-First traversal) recursivo
+    	 *@param v vertice dado
+    	 *@return
+    	 */
+    	public ArrayList<Vertex> toArrayDFS(Vertex start) {
+    		
+    	}
+    	private void toArrayDFSAux(Vertex current) {
+    		
+    	}
+    	
+    	/**
+    	 *Implementar una función para obtener en un ArrayList de vértices, los vértices que se visitan siguiendo un recorrido en profundidad Depth-First traversal iterativo (sin utilizar la recursividad).
+    	 *@param v vertice dado
+    	 *@return
+    	 */
+    	public ArrayList<Vertex> toArrayDFSIterative(Vertex start) {
+    		
+    	}
+    	
+    	/**
+    	 *Implementar una función para obtener en un array de vértices, los vértices que se visitan siguiendo un recorrido en anchura o amplitud (Breadth-First traversal).
+    	 *@param v vertice dado
+    	 *@return
+    	 */
+    	public ArrayList<Vertex> toArrayBFS(Vertex start) { 
+    		
+    	}
+    	
+    	/**
+    	 *Implementar una función que devuelva el camino más corto (si hay más de uno, que devuelva uno de ellos) según el peso de las aristas entre un vértice source y otro destination haciendo uso del algoritmo de caminos simples. Además debe ser posible calcular fácilmente su coste total.
+    	 *@param v vertice dado
+    	 *@return
+    	 */
+    	public String shortestPathWithSimplePaths(Vertex source, Vertex destination) { 
+    		
+    	}
+    	private void shortestPathWithSimplePathsAux(Vertex current, Vertex destination) { 
+    		
+    	}
+    	
+    	/**
+    	 *Implementar una función que devuelva el camino con mayor longitud (si hay más de uno, que devuelvauno de ellos) entre un vértice source a un vértice destination, y su correspondiente longitud de camino (recordad que la longitud de un camino es su número de vértices menos uno o equivalentemente el número de aristas). Además, y al final, debe devolver la longitud media de los caminos que van desde dicho vértice source hasta el vértice destination.
+    	 *@param v vertice dado
+    	 *@return
+    	 */
+    	public String largestLenghtPathWithSimplePaths(Vertex source, Vertex destination) {
+    		
+    	}
+    	private void largestLenghtPathWithSimplePathsAux(Vertex current, Vertex destination) {
+    		
+    	}
+    	
+    	/**
+    	 *Implementar una función que devuelva true en el caso de que exista un camino entre el vértice source y el destination y tiene una longitud de length, false en cualquier otro caso. Recordad que la longitud de un camino es su número de vértices menos uno o equivalentemente el número de aristas.
+    	 *@param v vertice dado
+    	 *@return
+    	 */
+    	public boolean isPathLength(Integer length, Vertex source, Vertex destination) { 
+    		
+    	}
+    	
+    	/**
+    	 *Implementar una función para determinar si un grafo no orientado es un árbol libre (tree). Un grafo no orientado es un árbol libre si es conexo y acíclico (sin ciclos), o equivalentemente, si es conexo y tiene exactamente n – 1 aristas para n nodos.
+    	 *@param v vertice dado
+    	 *@return
+    	 */
+    	public boolean isTree() { 
+    		
+    	}
+    	
+    	/**
+    	 *Hemos estudiado e implementado el algoritmo de Dijkstra,
+    	 *partiendo desde un vértice fuente, public ArrayList<Object> Dijkstra(Vertex source, Vertex destination),
+    	 *sobre un grafo orientado/no orientado, conexo y valorado positivamente, utilizando mapas (TreeMap) y conjuntos (TreeSet). 
+    	 *En este ejercicio se pide la implementación del algoritmo de Dijkstra utilizando una cola de prioridad (PriorityQueue<VertexWeightPair> pQ)
+    	 *en lugar de un TreeSet (V_minus_S) para determinar los vértices que se van procesando. Como una aproximación para acometer esta función es recomendable estudiar
+    	 *y comprobar el correcto funcionamiento de la función public ArrayList<Object> PrimPQ(Vertex source). Nótese que también hay que definir e implementar las clases:
+    	 *protected class VertexWeightPair implements Comparable<VertexWeightPair> { Vertex vertex; double weight; // … } y protected class EdgeWeight implements Comparable<EdgeWeight>
+    	 *{ Vertex from; Vertex to; double weight; // … }.
+    	 *@param v vertice dado
+    	 *@return
+    	 */
+    	public ArrayList<Object> DijkstraPQ(Vertex source, Vertex destination){
+    		
+    	}
+    	/**
+    	 *Hemos estudiado tanto teoría como en prácticas el algoritmo
+    	 *de Floyd para obtener el camino mínimo entre todos los posibles
+    	 *pares de vértices del grafo (public void Floyd()). 
+    	 *En este contexto, sea G un grafo orientado y valorado, 
+    	 *y vi un vértice de G. Se define la excentricidad del vértice 
+    	 *vi respecto del grafo G como el máximo de los costes de los
+    	 *caminos mínimos (matriz D del algoritmo de Floyd) que van
+    	 *desde cualquier otro vértice vj del grafo al vértice vi.
+    	 *También se define el centro del grafo como el vértice que 
+    	 *tiene mínima excentricidad. Se pide implementar en Java
+    	 *(public String FloydEC()) una función que calcule la
+    	 *excentricidad de cada uno de los vértices vi de G y 
+    	 *el centro del grafo junto con el coste del camino mínimo
+    	 *de cada uno de los vértices de G accesibles desde dicho 
+    	 *centro. Debe ayudarse de la función public void Floyd() 
+    	 *estudiada en clase.
+    	 *@param v vertice dado
+    	
+    	 *@return
+    	 */
+    	public String FloydEC(){
+    		
+    	}
+  	}
+
+} // class Network

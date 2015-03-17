@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;archivoenteros.txt&apos; to &apos;CantonTortosaGuillermoEDA/src/org.eda1.actividadesSeptiembre.actividad03&apos;&#x0D;&#x0A;- Original project: &apos;practicaseda2014&apos;&#x0D;&#x0A;- Destination element: &apos;CantonTortosaGuillermoEDA/src/org.eda1.actividadesSeptiembre.actividad03&apos;&#x0D;&#x0A;- Original element: &apos;archivoenteros.txt&apos;" description="Copy file" destination="=CantonTortosaGuillermoEDA/src&lt;org.eda1.actividadesSeptiembre.actividad03" element1="trunk/PracticasEDAI2014/Actividades/Actividades_Septiembre_2014/archivoenteros.txt" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1409069474794" units="0" version="1.0"/>
+</session>

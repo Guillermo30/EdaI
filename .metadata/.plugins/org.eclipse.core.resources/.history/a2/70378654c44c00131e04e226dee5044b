@@ -1,0 +1,98 @@
+package org.eda1.practica02.ejercicio01;
+
+
+	
+	import java.io.BufferedReader;
+	import java.io.File;
+	import java.io.FileNotFoundException;
+	import java.io.FileOutputStream;
+	import java.io.FileReader;
+	import java.io.IOException;
+	import java.io.ObjectOutputStream;
+	import java.util.ArrayList;
+	import org.eda1.estructurasdedatos.BSTree;
+	import org.eda1.estructurasdedatos.Iterator;
+
+	
+	public class ProcesarDirecciones {
+		
+		static BSTree<DireccionMaquinas> treeDirecciones;
+
+		
+		
+		//consturctores
+		public ProcesarDirecciones(){
+			this.treeDirecciones = null;
+		}
+		public ProcesarDirecciones(BSTree<DireccionMaquinas> treeDirecciones){
+			this.treeDirecciones = treeDirecciones;
+		}
+		
+		
+
+		//cargar archivo
+		public BSTree<DireccionMaquinas> cargarArchivo(String archivo){
+			treeDirecciones.clear();
+			try {
+				leerArchivo(archivo);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			return  treeDirecciones;
+		}
+		
+		//leer achivo
+		private static void leerArchivo(String stringArchivoEntrada)  throws FileNotFoundException {
+			
+			BufferedReader br = new BufferedReader(new FileReader (new File (stringArchivoEntrada)));
+			String linea,ip,maquina;
+			String[] par;
+			DireccionMaquinas maquinaActual;
+			
+			try {
+				// Leemos el fichero
+				while((linea=br.readLine())!=null){
+					par=linea.split(" ");	
+					ip=par[0];maquina=par[1];
+					// Comprobamos si el par ip / maquina existe. Si no existe lo creamos
+					if((maquinaActual=compruebaPar(ip,maquina))==null){ // Lo añadimos
+						if(!buscaIP(ip)){ //Si no existe esa ip la agregamos junto con su maquina
+							DireccionMaquinas temp=new DireccionMaquinas(ip,maquina);
+							treeDirecciones.add(temp);
+						}else  // Existe pero no tiene esa maquina. Añadirle la maquina
+							addMaquina(ip,maquina);
+					}else // Si existe, aumentamos su contador
+						maquinaActual.aumentaContador(maquina);				
+				}
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}   
+			
+			//guaarda direcciones
+			public void guardarDireccionesIncidencias(String archivo) throws FileNotFoundException{
+				
+				ArrayList<String> maquinas;
+				String resultado="";
+				Iterator<DireccionMaquinas> iterador= treeDirecciones.iterator();
+				DireccionMaquinas actual;
+				
+				while(iterador.hasNext()){//Recorremos todas sus maquinas
+					actual = iterador.next();
+					resultado+="[("+actual.devuelveIp()+", ["; //Leemos su ip
+					maquinas=actual.devuelveMaquinas();  //Leemos sus maquinas			
+					for(int j=0;j<maquinas.size();j++){
+						if(j>0) resultado+="\n"; // Si no es la primera fila insertamos un salto de linea
+						resultado+="["+maquinas.get(j)+", ";  //Leemos cada maquina
+						resultado+=actual.devuelveContador(maquinas.get(j))+"]";  //Leemos su contador
+					}
+					resultado+="])]\n";
+				}
+				escribeCadenaEnFichero(resultado,archivo);
+			}
+
+
+		}
+
+
+}

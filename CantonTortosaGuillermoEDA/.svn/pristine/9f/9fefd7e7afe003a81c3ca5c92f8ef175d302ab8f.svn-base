@@ -1,0 +1,51 @@
+package org.eda1.practica01.ejercicio02;
+
+import java.util.*;
+
+public class ProyectoCiudades {
+	
+	private String proyecto;
+	private ArrayList<String> ciudades;
+	
+	public ProyectoCiudades(){
+		this.proyecto = "";
+		this.ciudades = new ArrayList<String>();
+	}
+	
+	public ProyectoCiudades(String proy){
+		this.proyecto = proy;
+		this.ciudades = new ArrayList<String>();
+	}
+	
+	public void setProyecto(String proy){
+		this.proyecto = proy;
+	}
+	
+	public String getProyecto(){
+		return this.proyecto;
+	}
+	
+	public void addCiudad(String ciudad){
+		boolean encontrada = false;
+		for(int i=0; i<this.ciudades.size(); i++){
+			if(this.ciudades.get(i).equals(ciudad)){
+				encontrada = true;
+				break;
+			}
+		}
+		if(!encontrada)this.ciudades.add(ciudad);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ArrayList<String> getCiudades(){
+		return (ArrayList<String>) this.ciudades.clone();
+	}
+	
+	public String getCiudad(int index){
+		return this.ciudades.get(index);
+	}
+	
+	public int size(){
+		return this.ciudades.size();
+	}
+}

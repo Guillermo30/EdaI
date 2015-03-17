@@ -1,0 +1,56 @@
+//
+// Universidad de Almería
+// Grado en Ingeniería Informática
+// Fuente Java según Plantilla
+//
+// PRACTICA : Ordenación y búsqueda.
+// ASIGNATURA : Metodología de la programación
+//
+package org.eda1.practica01.ejercicio01;
+
+import java.util.LinkedList;
+import java.util.ListIterator;
+
+/**
+ * Clase editar un texto.
+ * @author Guillermo Cantón Tortosa
+ * @version 1.0. 10.2013
+ *
+ */
+
+public class Editor {
+	
+	//declaracion de variables
+	
+	final public char COMAND_START;
+	final public char DELIMITER;
+	final public String INSERT_COMMAND;
+	final public String DELETE_COMMAND;
+	final public String LINE_COMMAND;
+	final public String DONE_COMMAND;
+	final public String LAST_COMMAND;
+	final public String GETLINES_COMMAND;
+	final public String CHANGE_COMMAND;
+	final public String BAD_COMMAND_MESSAGE;
+	final public String BAD_LINE_COMMAND;
+	final public String INTEGER_NEEDED;
+	final public String TWO_INTEGERS_NEEDED;
+	final public String FIRST_GREATER;
+	final public String FIRST_LESS_THAN_ZERO;
+	final public String SECOND_TOO_LARGE;
+	final public String M_LESS_THAN_ZERO;
+	final public String M_TOO_LARGE;
+	final public String LINE_TOO_LONG;
+	final public String INCORRECT_DELIMITERS_NUMBER;
+	final public String NO_DELIMITERS_BEGIN_END;
+	final public String TWO_CONSECUTIVE_DELIMITERS_AT_THE_BEGINNING;
+	final public int MAX_LINE_LENGTH;
+	
+	protected LinkedList<String> text;
+	protected ListIterator<String> current;
+	protected boolean inserting;
+	
+	
+	
+
+}

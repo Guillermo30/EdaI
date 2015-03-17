@@ -1,0 +1,494 @@
+//
+// Universidad de Almería
+// Grado en Ingeniería Informática
+// Fuente Java según Plantilla
+//
+// PRACTICA 2 : Uso de árboles binarios de búsqueda en Java
+// ASIGNATURA : Estructura de datos y Algoritmos.
+//
+package org.eda1.practica02.ejercicio02;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import org.eda1.estructurasdedatos.*;
+
+/**
+ * Clase Procesar los datos de empresas proyectos y ciudades.
+ * @author Guillermo Cantón Tortosa
+ * @version 1.0. 11.2013
+ */
+public class ProcesarDatos {
+	
+	/**
+	 * Metodo que permite cargar en memoria una lista de EmpresaProyectos almacenado en un fichero.
+	 * @param archivo String que contiene la dirección del fichero a cargar.
+	 * @return ArrayList<EmpresaProyectos> lista que contiene las EmpresaProyectos cargadas del fichero.
+	 */
+	public static AVLTree<EmpresaProyectos> cargarArchivo(String archivo){
+		try {
+			
+			FileReader fr = new FileReader(new File(archivo));
+			BufferedReader br = new BufferedReader(fr);
+			String linea, empr, proy, ciudad;
+			AVLTree<EmpresaProyectos> aux = new AVLTree<EmpresaProyectos>();
+			
+			try {
+				
+				while((linea = br.readLine())!=null){
+					empr = linea.split(" ")[0];
+					proy = linea.split(" ")[1];
+					ciudad = linea.split(" ")[2];
+					EmpresaProyectos auxEmp = aux.find(new EmpresaProyectos(empr));
+					
+					if(auxEmp !=null){
+						
+						ProyectoCiudades auxProy = auxEmp.getProyectosCiudades().find(new ProyectoCiudades(proy));
+						
+						if(auxProy != null){
+							
+							if(auxProy.getCiudades().find(ciudad)==null){
+								
+								auxProy.addCiudad(ciudad);
+							}
+							
+						}else{
+							
+							auxEmp.addProyectoCiudad(proy, ciudad);
+						}
+						
+					}else{
+						
+						aux.add(new EmpresaProyectos(empr, proy, ciudad));
+					}
+				}
+				
+				br.close();
+				fr.close();
+				return aux;
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * Metodo que permite escribir en un fichero una lista de EmpresaProyectos.
+	 * @param listaEmpresas ArrayList<EmpresaProyectos> lista de EmpresaProyectos a guardar.
+	 * @param archivo String que contiene la posición del fichero en el que desamos alamacenar la lista.
+	 */
+	public static void guardarEmpresasProyectosCiudades(AVLTree<EmpresaProyectos> listaEmpresas, String archivo){
+		
+		try {
+			
+			FileWriter fw = new FileWriter(archivo);
+			PrintWriter pw = new PrintWriter(fw);
+			String linea="";
+			linea += listaEmpresas.toString();
+			pw.print(linea);
+			pw.close();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * Devuelve una cadena con todas la empresas.
+	 * @param listaEmpresas ArrayList con todas las empresas.
+	 * @return String que muestra la lista de empresas.
+	 */
+	public static String devolverEmpresasProyectosCiudades(AVLTree<EmpresaProyectos> listaEmpresas){
+		
+		String cadena="";
+		Iterator<EmpresaProyectos> ite = listaEmpresas.iterator();
+		
+		while(ite.hasNext()){
+			cadena += ite.next().toString()+"\n";
+		}
+		
+		return cadena;
+	}
+	
+	/**
+	 * Enumera las empresas que tienen su sede en una determinada ciudad
+	 * @param listaEmpresas ArrayList<EmpresaProyectos> que contiene la lista
+	 * @param ciudad String que determina la ciudad
+	 * @return
+	 */
+	public static AVLTree<String> enumerarEmpresasCiudad(AVLTree<EmpresaProyectos> listaEmpresas, String ciudad){
+		
+		AVLTree<String> empresas = new AVLTree<String>();
+
+		return empresas;
+	}
+	
+	/**
+	 * Metodo que devuelve una lista con todos los proyectos que tiene sede en una determinada ciudad
+	 * @param listaEmpresas ArrayList que contiene todas las empresas
+	 * @param ciudad String con el nombre de la ciudad a buscar
+	 * @return ArrayList<String> con la lista de los nombre de los proyectos que tiene sede en dicha ciudad
+	 */
+	public static AVLTree<String> enumerarProyectosCiudad(AVLTree<EmpresaProyectos> listaEmpresas, String ciudad){
+		
+		AVLTree<String> proyectos = new AVLTree<String>();
+		
+		return proyectos;
+	}
+	
+	/**
+	 * Determina el numero de ciudades distintas donde se desarrolla un proyecto de una empresa
+	 * @param listaEmpresas ArrayList que contiene la lista de empresa en la que buscar
+	 * @param empresa String con el nombre de la empresa
+	 * @return int con el numero de ciudades
+	 */
+	public static int contarCiudadesEmpresa(AVLTree<EmpresaProyectos> listaEmpresas, String empresa){
+		
+		AVLTree<String> ciudades = new AVLTree<String>();
+		
+		return ciudades.size();
+	}
+	
+	/**
+	 * Devuelve una lista con las ciudades donde se desarrolla un proyecto determinado
+	 * @param listaEmpresas ArrayList con las empresas donde buscar
+	 * @param proyecto String con el nombre del proyecto a buscar
+	 * @param empresa String con el nombre de la empresa
+	 * @return ArrayList<String> con el nombre de las ciudades
+	 */
+	public static AVLTree<String> enumerarCiudadesProyectoEmpresa(AVLTree<EmpresaProyectos> listaEmpresas, String proyecto, String empresa){
+		
+		AVLTree<String> resultado = new AVLTree<String>();
+		
+		return resultado;
+	}
+	
+	/**
+	 * Devuelve un entero con el numero de proyectos de una empresas
+	 * @param listaEmpresas AVLTree<EmpresaProyectos> con las empresas donde buscar
+	 * @param empresa String con el nombre de la empresa
+	 * @return int con el numero de poryectos de una empresa
+	 */
+	public static int numeroProyectosEmpresa(AVLTree<EmpresaProyectos> listaEmpresas, String empresa) {
+		
+		EmpresaProyectos aux = listaEmpresas.find(new EmpresaProyectos(empresa));
+		
+		if(aux != null)return aux.getProyectosCiudades().size();
+		return 0;
+	}
+	
+	/**
+	 * Devuelve un entero con el numero de cuidades con el mismo proyecto.
+	 * @param listaEmpresas AVLTree<EmpresaProyectos> con las empresas donde buscar
+	 * @param proyecto String con el nombre del proyecto.
+	 * @return int con el numero ciudades con el mismo proyecto.
+	 */
+	public static int numeroCiudadesProyecto(AVLTree<EmpresaProyectos> listaEmpresas, String proyecto) {
+		
+		int resultado = 0;
+		Iterator<EmpresaProyectos> ite = listaEmpresas.iterator();
+		
+		while(ite.hasNext()){
+			
+			ProyectoCiudades aux = ite.next().getProyectosCiudades().find(new ProyectoCiudades(proyecto));
+			
+			if(aux!=null){
+				
+				return aux.getCiudades().size();
+			}
+		}
+		
+		return resultado;
+	}
+	
+	/**
+	 * Devuelve un entero con el numero de ciudades con una pmpresa determinada.
+	 * @param listaEmpresas AVLTree<EmpresaProyectos> con las empresas donde buscar
+	 * @param empresa String con el nombre de la empresa
+	 * @return int con el numero de ciudades en la que esta una empresa.
+	 */
+	public static int numeroCiudadesEmpresa(AVLTree<EmpresaProyectos> listaEmpresas, String empresa) {
+		
+		ArrayList<String> ciudades = new ArrayList<String>();
+		EmpresaProyectos aux = listaEmpresas.find(new EmpresaProyectos(empresa));
+		
+		if(aux!=null){
+			
+			Iterator<ProyectoCiudades> ite = aux.getProyectosCiudades().iterator();
+			
+			while(ite.hasNext()){
+				
+				Iterator<String> iteCiudad = ite.next().getCiudades().iterator();
+				
+				while(iteCiudad.hasNext()){
+					
+					String ciudad = iteCiudad.next();
+					
+					if(!ciudades.contains(ciudad)){
+						
+						ciudades.add(ciudad);
+					}
+				}
+			}
+		}
+		
+		return ciudades.size();
+	}
+	
+	/**
+	 * Devuelve una lista con las empresas de una ciudad determinada.
+	 * @param listaEmpresas AVLTree<EmpresaProyectos> con las empresas donde buscar
+	 * @param ciudad String cuidad en la que buscar empresas.
+	 * @return resultado ArrayList<String> con listado de empresas.
+	 */
+	public static ArrayList<String> devolverEmpresasCiudad(AVLTree<EmpresaProyectos> listaEmpresas, String ciudad) {
+		
+		ArrayList<String> resultado = new ArrayList<String>();
+		Iterator<EmpresaProyectos> iteEmp = listaEmpresas.iterator();
+		
+		while(iteEmp.hasNext()){
+			
+			EmpresaProyectos auxEmp = iteEmp.next();
+			Iterator<ProyectoCiudades> itePro = auxEmp.getProyectosCiudades().iterator();
+			
+			while(itePro.hasNext()){
+				
+				ProyectoCiudades auxPro = itePro.next();
+				Iterator<String> iteCiudad = auxPro.getCiudades().iterator();
+				
+				while(iteCiudad.hasNext()){
+					
+					if(iteCiudad.next().equals(ciudad)){
+						
+						if(!resultado.contains(auxEmp.getEmpresa()))resultado.add(auxEmp.getEmpresa());
+					}
+				}
+			}
+		}
+		
+		return resultado;
+	}
+	
+	/**
+	 * Devuelve una lista con los proyectos de una ciudad determinada.
+	 * @param listaEmpresas AVLTree<EmpresaProyectos> con las empresas donde buscar
+	 * @param ciudad String cuidad en la que buscar empresas.
+	 * @return resultado ArrayList<String> con listado de proyectos.
+	 */
+	public static ArrayList<String> devolverProyectosCiudad(AVLTree<EmpresaProyectos> listaEmpresas, String ciudad) {
+		
+		ArrayList<String> resultado = new ArrayList<String>();
+		Iterator<EmpresaProyectos> iteEmp = listaEmpresas.iterator();
+		
+		while(iteEmp.hasNext()){
+			
+			EmpresaProyectos auxEmp = iteEmp.next();
+			Iterator<ProyectoCiudades> itePro = auxEmp.getProyectosCiudades().iterator();
+			
+			while(itePro.hasNext()){
+				
+				ProyectoCiudades auxPro = itePro.next();
+				
+				if(auxPro.getCiudades().contains(ciudad)){
+					
+					if(!resultado.contains(auxPro.getProyecto()))resultado.add(auxPro.getProyecto());
+				}
+			}
+		}
+		
+		return resultado;
+	}
+	
+	/**
+	 * Devuelve una lista con las cuidades en la que esta una empresa determinada.
+	 * @param listaEmpresas AVLTree<EmpresaProyectos> con las empresas donde buscar
+	 * @param empresa String empresa.
+	 * @return resultado ArrayList<String> con listado de ciudades.
+	 */
+	public static ArrayList<String> devolverCiudadesEmpresa(AVLTree<EmpresaProyectos> listaEmpresas, String empresa) {
+		
+		ArrayList<String> resultado = new ArrayList<String>();
+		Iterator<EmpresaProyectos> iteEmp = listaEmpresas.iterator();
+		
+		while(iteEmp.hasNext()){
+			
+			EmpresaProyectos auxEmp = iteEmp.next();
+			
+			if(auxEmp.getEmpresa().equals(empresa))
+			{
+				Iterator<ProyectoCiudades> itePro = auxEmp.getProyectosCiudades().iterator();
+				
+				while(itePro.hasNext()){
+					
+					Iterator<String> iteCiudad = itePro.next().getCiudades().iterator();
+					
+					while(iteCiudad.hasNext()){
+						
+						String ciudad = iteCiudad.next();
+						
+						if(!resultado.contains(ciudad))resultado.add(ciudad);
+					}
+				}
+			}
+		}
+		
+		return resultado;
+	}
+	
+	/**
+	 * Devuelve una lista con las cuidades con un determinado poryecto de una dertermianda empresa.
+	 * @param listaEmpresas AVLTree<EmpresaProyectos> con las empresas donde buscar.
+	 * @param proyecto String proyecto.
+	 * @param empresa String empresa.
+	 * @return resultado ArrayList<String> con listado de ciudades.
+	 */
+	public static ArrayList<String> devolverCiudadesProyectoEmpresa(AVLTree<EmpresaProyectos> listaEmpresas, String proyecto,String empresa) {
+		
+		ArrayList<String> resultado = new ArrayList<String>();
+		Iterator<EmpresaProyectos> iteEmp = listaEmpresas.iterator();
+		
+		while(iteEmp.hasNext()){
+			
+			EmpresaProyectos auxEmp = iteEmp.next();
+			
+			if(auxEmp.getEmpresa().equals(empresa)){
+				
+				Iterator<ProyectoCiudades> itePro = auxEmp.getProyectosCiudades().iterator();
+				
+				while(itePro.hasNext()){
+					
+					ProyectoCiudades auxPro = itePro.next();
+					
+					if(auxPro.getProyecto().equals(proyecto)){
+						
+						Iterator<String> iteCiudad = auxPro.getCiudades().iterator();
+						
+						while(iteCiudad.hasNext()){
+							
+							String ciudad = iteCiudad.next();
+							
+							if(!resultado.contains(ciudad)){
+								
+								ArrayList<String> proyectos = devolverProyectosCiudad(listaEmpresas, ciudad);
+								
+								if(proyectos.size()>1)resultado.add(ciudad);
+								
+							}
+						}
+						
+						Collections.reverse(resultado);
+						return resultado;
+					}
+				}
+			}
+		}
+		return resultado;
+	}
+	
+	/**
+	 * Devuelve una lista con las las empresas con proyectos y ciudades comunes.
+	 * @param listaEmpresas AVLTree<EmpresaProyectos> con las empresas donde buscar.
+	 * @param empresa String empresa.
+	 * @return resultado ArrayList<String> con listado de empresas.
+	 */
+	public static ArrayList<String> devolverEmpresaParesProyectoCiudadesComunes(AVLTree<EmpresaProyectos> listaEmpresas, String empresa) {
+		
+		ArrayList<String> resultado = new ArrayList<String>();
+		EmpresaProyectos Empresa = listaEmpresas.find(new EmpresaProyectos(empresa));
+		
+		if(Empresa==null)return null;
+		Iterator<ProyectoCiudades> itePro = Empresa.getProyectosCiudades().iterator();
+		
+		while(itePro.hasNext()){
+			
+			ProyectoCiudades auxPro = itePro.next();
+			Iterator<String> iteCiudad = auxPro.getCiudades().iterator();
+			
+			while(iteCiudad.hasNext()){
+				
+				String ciudad = iteCiudad.next();
+				Iterator<ProyectoCiudades> iteProAux = Empresa.getProyectosCiudades().iterator();
+				
+				while(iteProAux.hasNext()){
+					
+					ProyectoCiudades auxProSec = iteProAux.next();
+					
+					if(auxProSec.getProyecto()!=auxPro.getProyecto()){
+						
+						String CiudadCoincide = auxProSec.getCiudades().find(ciudad);
+						
+						if(CiudadCoincide!=null){
+							
+							if(!resultado.contains(auxProSec.getProyecto()+" - "+auxPro.getProyecto()+" => "+ciudad)){
+								
+								resultado.add(auxPro.getProyecto()+" - "+auxProSec.getProyecto()+" => "+ciudad);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		Collections.sort(resultado);
+		return resultado;
+	}
+	
+	/**
+	 * Añade una empresa con si proyecto y su ciudad
+	 * @param listaEmpresas AVLTree<EmpresaProyectos> con las empresas donde buscar.
+	 * @param empresa String empresa.
+	 * @return boolena True si la añade False sino.
+	 */
+	public boolean addEmpresaProyectoCiudadWithFind(AVLTree<EmpresaProyectos> listaEmpresas, String empresa, String proyecto, String ciudad){
+		
+		EmpresaProyectos aux = listaEmpresas.find(new EmpresaProyectos(empresa));
+		
+		if(aux!=null){
+			
+			return aux.addProyectoCiudad(proyecto, ciudad);
+			
+		}else{
+			
+			return listaEmpresas.add(new EmpresaProyectos(empresa, proyecto, ciudad));
+		}
+	}
+	
+	/**
+	 * Añade una empresa con si proyecto y su ciudad
+	 * @param listaEmpresas AVLTree<EmpresaProyectos> con las empresas donde buscar.
+	 * @param empresa String empresa.
+	 * @return boolena True si la añade False sino.
+	 */
+	public boolean addEmpresaProyectoCiudad(AVLTree<EmpresaProyectos> listaEmpresas, String empresa, String proyecto, String ciudad){
+		
+		Iterator<EmpresaProyectos> ite = listaEmpresas.iterator();
+		
+		while(ite.hasNext()){
+			
+			EmpresaProyectos aux = ite.next();
+			
+			if(aux.getEmpresa().equals(empresa))return aux.addProyectoCiudad(proyecto, ciudad);
+			
+		}
+		
+		return listaEmpresas.add(new EmpresaProyectos(empresa, proyecto, ciudad));
+	}
+	
+	/**
+	 * Muesta la lista de empresas.
+	 * @param listaEmpresas AVLTree<EmpresaProyectos> con las empresas.
+	 */
+	public void mostratEmpresasProyectosCiudades(AVLTree<EmpresaProyectos> listaEmpresas){
+		System.out.println(listaEmpresas.toString());
+	}
+}

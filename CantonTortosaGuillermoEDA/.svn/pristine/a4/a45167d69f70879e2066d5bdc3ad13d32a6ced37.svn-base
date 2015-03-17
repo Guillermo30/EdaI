@@ -1,0 +1,61 @@
+package org.eda1.actividad02.ejercicio02;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+import org.eda1.actividad02.ejercicio01.Heap;
+
+public class HeapSort<T>{
+
+	//Utiliza el metodo sortHeap
+	public static <T>void sortHeap(ArrayList<T> lista,Comparator<T> comp){
+		int tam=lista.size();
+		// 1-Creamos el heap del mismo tamaño que el ArrayList y mismo comparator
+		Heap<T> heap = new Heap<T>(tam,comp);
+		// 2-Rellenamos el heap con los valores del ArrayList
+		for(int i=0;i<tam;i++)			
+			heap.add((T)lista.remove(0));		
+		// 3-Los devolvemos a la lista ordenados del monticulo(heap)
+		while(!heap.isEmpty())
+			lista.add((T)heap.removeMin());
+	}
+
+	//Utiliza el metodo heapSort
+	public static <T> void heapSort(ArrayList<T> lista,Comparator<T> comp){
+		int tam=lista.size(),i;
+		// 1-Primera parte. 
+		// Aplicamos siftDown a los padres."Hacemos" un heap del arraylist
+		for(i=tam>>1;i>=0;i--)  
+			siftDown(lista,i,tam-1,comp);
+		//Segunda parte. Intercambiamos y reparamos el heap hasta lo "roto"
+		for(i=tam;i>1;i--){
+			swap(lista,0,i-1);
+			siftDown(lista,0,i-1,comp);
+		}
+		//3- Le damos la vuelta ya que hemos ordenado descendentemente (Less)
+		Collections.reverse(lista);		
+	}
+
+	protected static<T> void siftDown(ArrayList<T> lista,int start,int last,Comparator<T> comp){
+		int parent=start,child=(parent<<1)+1;	
+		while (child<last){			
+			if ((child<last-1) && comp.compare(lista.get(child),lista.get(child+1))>0)
+				child++;//Si tiene un hermano y es el menor nos pasamos a este
+			if (comp.compare(lista.get(parent),lista.get(child))<0)
+				break; // Si cumple la restriccion salimos
+			swap(lista,parent,child);
+			parent=child;
+			child=(parent<<1)+1; // Lo volvemos a comprobar en el "nuevo hijo"
+		}
+	}
+
+	//Intercambia los valores de dos indices de una lista
+	protected static<T> void swap(ArrayList<T> lista,int parent,int child){
+		T temp=lista.get(parent);
+		lista.set(parent,lista.get(child));
+		lista.set(child,temp);
+	}
+
+}
+

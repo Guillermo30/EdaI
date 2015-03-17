@@ -1,0 +1,88 @@
+package org.eda1.practica02.ejercicio01;
+
+
+
+	public class MaquinaContador implements Comparable{
+		
+		private String maquina;
+		private int contador;
+		
+		//consturctores
+		
+		public MaquinaContador(String maquina, int contador){
+			
+			this.maquina = maquina;
+			this.contador = contador;		
+			
+		}
+		
+		public MaquinaContador(String maquina){
+			
+			this.maquina = maquina;
+			this.contador = 1;
+			
+		}
+		
+		public MaquinaContador(){
+			
+			this.maquina = "";
+			this.contador = 1;
+		}
+		
+		public void setMaquina(String maquina){
+			
+			this.maquina = maquina;
+			
+		}
+		
+		public String getMaquina(){
+			
+			return this.maquina;
+			
+		}
+		
+		public void setContador(int contador){
+			
+			this.contador = contador;
+			
+		}
+		
+		public int getContador(){
+			
+			return this.contador;
+			
+		}
+		
+		public void incrementarContador(){
+			
+			++this.contador;
+		}
+		
+		public int compareTo(Object otraMaquinaContador){
+			
+			MaquinaContador nueva = (MaquinaContador)otraMaquinaContador;
+			return this.maquina.compareTo(nueva.getMaquina());
+			
+			
+		}
+		
+		public boolean equals(Object obj){
+			
+			MaquinaContador nueva = (MaquinaContador)obj;
+			return this.maquina.equals(nueva);
+			
+			
+		}
+		
+		public String toString(){
+			
+			return this.toString();
+			
+		}
+
+	
+		
+	
+
+	
+}

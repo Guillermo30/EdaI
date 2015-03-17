@@ -1,0 +1,410 @@
+//
+// Universidad de Almería
+// Grado en Ingeniería Informática
+// Fuente Java según Plantilla
+//
+// ACTIVIDAD 2 : Implementar operaciones sobre un Heap y heapsort
+// ASIGNATURA : Estructura de datos y Algoritmos I.
+//
+package org.eda1.actividad02.ejercicio01;
+
+import java.util.*;
+
+/**
+ * Clase para repersentar un monticulo.
+ * @author Guillermo Cantón Tortosa
+ * @version 1.0. 11.2013
+ */
+public class Heap<T> {
+	
+	protected static final int DEFAULT_INITIAL_CAPACITY = 7;
+	
+	protected ArrayList<T> theHeap;
+	
+	protected Comparator<T> comparator;
+
+
+	/**
+	 * Inicializa el Heap a una capacidad inicial de initialCapacity y con
+	 * elementos que estÃ¡n ordenados por un objeto Comparator dado.
+	 * @param initialCapacity - Capacidad inicial para el Heap.
+	 * @param comp  - el objeto Comparator.
+	 */	// constructor con una capacidad inicial y un Comparator
+	public Heap(int initialCapacity, Comparator<T> comp) {
+		if (initialCapacity < 1)
+			throw new IllegalArgumentException();
+		theHeap = new ArrayList<T>(initialCapacity);
+		comparator = comp;
+	} 
+
+
+	/**
+	 * Inicializa el Heap con una capacidad inicial por defecto
+	 * DEFAULT_INITIAL_CAPACITY y con elementos en una clase que implemente la
+	 * interfaz Comparable
+	 */ // constructor por defecto
+	public Heap() {
+		this(DEFAULT_INITIAL_CAPACITY, null);
+	}
+
+	/**
+	 * Inicializa el Heap a una capacidad inicial de initialCapacity y con
+	 * elementos en una clase que implementa la interface Comparable
+	 * @param initialCapacity - la capacidad inicial del Heap.
+	 */ // constructor con una capacidad inicial
+	public Heap(int initialCapacity) {
+		this(initialCapacity, null);
+	}
+
+	/**
+	 * Inicializa el Heap a una capacidad inicial de initialCapacity, y con
+	 * elementos comparados segun el objeto Comparator comp.
+	 * @param comp - el objeto Comparator utilizado para comparar elementos en el Heap
+	 */ // constructor con parametro Comparator
+	public Heap(Comparator<T> comp) {
+		this(DEFAULT_INITIAL_CAPACITY, comp);
+	}
+
+	/**
+	 * Inicializa este Heap con un objeto Heap pasado por parametro Los
+	 * elementos en este Heap se compararan como se especifiquen en el objeto
+	 * Heap que se pasa como parametro The worstTime(n) is O(n), donde n es el
+	 * numero de elementos en el Heap pasado como parametro.
+	 * @param otherHeap - el Heap que se va a copiar en en objeto heap actual
+	 */// constructor copia
+	public Heap(Heap<T> otherHeap) {
+		theHeap = new ArrayList<T>(otherHeap.theHeap);
+		comparator = otherHeap.comparator;
+	} 
+
+	/**
+	 * Devuelve el numero de elementos en el Heap
+	 * @return numero de elementos que hay en este Heap.
+	 */
+	public int size() {
+		return theHeap.size();
+	}
+
+	/**
+	 * Determina si el Heap no tiene elementos (esta vacio).
+	 * @return true - si el heap no tiene elementos, en otro caso false;
+	 */
+	public boolean isEmpty() {
+		return theHeap.isEmpty();
+	}
+
+	/**
+	 * Inserta un elemento en el Heap. The worstTime(n) is O(n) and
+	 * averageTime(n) is constant.
+	 * @param element - el elemento que va a ser insertado en el Heap
+	 */
+	public void add(T element) {
+		theHeap.add(element);
+		siftUp();
+	} 
+
+	/**
+	 * Restaura las propiedades del Heap, empezando desde el final hasta la raiz
+	 * The worstTime(n) is O(log n), and averageTime(n) is constant.
+	 */
+	protected void siftUp() {
+		int child = theHeap.size() - 1, parent;
+
+		while (child > 0) {
+			parent = (child - 1) >> 1;	// >> 1 is slightly faster than / 2
+										// => parent = (child - 1) / 2
+			if (compare(theHeap.get(child), theHeap.get(parent)) >= 0)
+				break;
+			swap(parent, child);
+			child = parent;
+		}
+	} // metodo siftUp
+
+	/**
+	 * Compara dos elementos dados segun Comparable o un objeto Comparator
+	 * @param element1 - uno de los elementos a comparar.
+	 * @param element2 - el otro elemento a comparar.
+	 * @return un entero negativo, 0, o un entero positivo, dependiendo de si
+	 *         element1 es menor que, igual a o mayor que element2.
+	 */
+	@SuppressWarnings("unchecked")
+	protected int compare(T element1, T element2) {
+		return (comparator == null ? ((Comparable<T>) element1)
+				.compareTo(element2) : comparator.compare(element1, element2));
+	}
+
+	/**
+	 * Intercambia dos elementos del Heap (parent y child).
+	 * @param parent- el indice del elemento padre (parent).
+	 * @param child - el indice del elemento hijo (child).
+	 */
+	public void swap(int parent, int child) {
+		T temp = theHeap.get(parent);
+		theHeap.set(parent, theHeap.get(child));
+		theHeap.set(child, temp);
+	} 
+
+	/**
+	 * Devuelve el elemento con el menor valor del Heap.
+	 * @return el elemento con el menor valor del Heap.
+	 * @throws NoSuchElementException- si el Heap esta vacio.
+	 */
+	public T getMin() {
+		if (theHeap.isEmpty())
+			throw new NoSuchElementException("Heap removeMin(): empty heap");
+		return theHeap.get(0);
+	} 
+
+	/**
+	 * Elimina el elemento con el menor valor del Heap. The worstTime(n) is
+	 * O(log n).
+	 * @return el elemento eliminado.
+	 * @throws NoSuchElementException- si el Heap esta vacio.
+	 */
+	public T removeMin() {
+		if (theHeap.isEmpty())
+			throw new NoSuchElementException("Heap removeMin(): empty heap");
+
+		T minElem = theHeap.get(0);
+		theHeap.set(0, theHeap.get(theHeap.size() - 1));
+		theHeap.remove(theHeap.size() - 1);
+		siftDown(0);
+		return minElem;
+	}
+
+	/**
+	 * Restaura las propiedades del Heap (hundir) The worstTime(n) is O(log n).
+	 * @param start- el indice del Heap donde va a empezar la restauracicn de la
+	 *            propiedad.
+	 */
+	protected void siftDown(int start) {
+		int parent = start, child = (parent << 1) + 1;	// parent << 1 is
+														// slightly faster than
+														// parent * 2
+														// => (2 * parent) + 1
+
+		while (child < theHeap.size()) {
+			if (child < theHeap.size() - 1
+					&& compare(theHeap.get(child), theHeap.get(child + 1)) > 0)
+				child++; // child is the right child (child = (2 * parent) + 2)
+			if (compare(theHeap.get(child), theHeap.get(parent)) >= 0)
+				break;
+			swap(parent, child);
+			parent = child;
+			child = (parent << 1) + 1; // => child = (2 * parent) + 1
+		}
+	} // function siftDown
+
+
+	
+	/**
+	 * Asigna un valor a una posicion concreta
+	 * @param i int posicion 
+	 * @param valor T valor
+	 */
+	public void assign(int i,T valor){
+		if(theHeap.size()<=i)
+			theHeap.add(i,valor);
+		else theHeap.set(i,valor);			
+	}
+
+	
+	/**
+	 * Obtenemos un String con el contenido del heap
+	 * @return String 
+	 */
+	public String toString(){		
+		return theHeap.toString(); 
+	}
+
+	
+	/**
+	 * Recorre el heap de arriba a abajo comprobando si es un heap
+	 * @return true si es heap y false si no 
+	 */
+	public boolean buscaTopDown(){
+		int parent=0;	
+		
+		for (int child=(parent << 1)+1;child< theHeap.size();child=(parent<< 1)+1){
+			
+			if (child<theHeap.size()-1 && compare(getValue(child),getValue(child+1))>0)
+				child++; // si es menor pasamos al derecho
+			
+			if ((compare(getValue(parent),getValue(child))>0))
+				return false; 
+			parent++;  
+		} 
+		
+		return true;
+	}	
+
+	/**
+	 * Recorre el heap de abajo a arriba comprobando si es un heap
+	 * @return true si es heap y false si no 
+	 */
+	public boolean buscaBottomTop(){
+		
+		for (int child=theHeap.size()-1;child>(theHeap.size()>>1);child--){
+			int parent=(child-1)>>1;
+		
+		if ((compare(getValue(parent),getValue(child)) > 0))
+			return false; 			
+		}
+		
+		return true;
+	}
+
+	/**
+	 * Comprueba si es un heap
+	 * @return true si es heap y false si no 
+	 */
+	public boolean isHeap() {		
+		return (buscaTopDown() && buscaTopDown());	
+	}
+
+	/**
+	 * Metodo para crear un heap
+	 */
+	public void makeHeap() {
+		
+		for(int i=theHeap.size()>>1;i>=0;i--) 
+			siftDown(i);   
+	}
+
+	
+	/**
+	 * Metodo para aumentar el valor de un nodo un valor 
+	 * @param i int posicion
+	 * @param inc T incremento 
+	 */
+	@SuppressWarnings("unchecked")
+	public void increaseKey(int i,T inc) {
+		
+		Integer incremento= (Integer)getValue(i)+(Integer)inc;
+		assign(i,(T)incremento);	
+		siftDown((Integer) i);
+	}
+
+	/**
+	 * Metodo para decrementar el valor de un nodo un valor 
+	 * @param i int posicion
+	 * @param inc T decermento
+	 */
+	@SuppressWarnings("unchecked")
+	public void decreaseKey(int i,T dec) {	
+		
+		Integer decremento= (Integer)getValue(i)-(Integer)dec;
+		assign(i,(T)decremento);
+		siftUp(i);
+		
+	}
+
+	/**
+	 * Metodo para subir un elemento concreto del heap 
+	 * @param i int posicion
+	 */
+	protected void siftUp(int i){
+		
+		int child =i, parent;
+		
+		while (child > 0) {
+			
+			parent = (child - 1) >> 1;
+			
+			if (compare(getValue(child),getValue(parent))>= 0)
+				break; // Si el padre no es menor que el hijo salimos
+			swap(parent, child);
+			child = parent;
+		}
+	}
+
+	/**
+	 * Metodo para organizar el heap
+	 * @param i int posicion
+	 * @param valor T elemento
+	 */
+	public void replaceKey(int i, T valor){
+		theHeap.set(i,(T) valor);
+		//Si su padre es mayor y no es el primero
+		if (i>1 && (compare(getValue((i-1)>>1),getValue(i)) > 0)) 			
+			siftUp();
+		else siftDown(i);		
+	}
+
+	/**
+	 * Metodo para eliminar un elemento de una posicion de terminada
+	 * @param index int posicion
+	 */
+	@SuppressWarnings("unchecked")
+	public void delete(int index) {
+		
+		Integer decremento=(Integer)theHeap.get(index)-(Integer)getMin()+new Integer(1);
+		decreaseKey(index,(T)decremento);	
+		removeMin();
+		
+	}
+
+	/**
+	 * Metodo para obtener el valor de una posicion de terminada del heap
+	 * @param i int posicion
+	 * @return T elemento del hepa en esa posicion
+	 */
+	public T getValue(int i) {
+		return theHeap.get(i);	
+	}	
+
+	/**
+	 * Metodo para obetenr la rama minima
+	 * @return salida String
+	 */
+	public String branchMinSum() {
+		ArrayList<Integer> lista = new ArrayList<Integer>();
+		
+		for(int i = theHeap.size()-1; true ;i--){
+			if(2*i <= theHeap.size()-1) break;
+			lista.add(i);
+		}
+		
+		int current = 0;
+		
+		ArrayList<ArrayList<Integer>> val = new ArrayList<ArrayList<Integer>>(lista.size());
+		
+		for(int i=0; i < lista.size(); i++){
+			current = lista.get(i);
+			val.add(new ArrayList<Integer>());
+			val.get(i).add((Integer) getValue(current));
+			do{
+				current = (current-1)/2;
+				val.get(i).add((Integer) getValue(current));
+			}while(current != 0);
+		}
+		
+		
+		int suma, sumaMin = 0;
+		for(int i=0; i < lista.size(); i++){
+			suma = 0;
+			for(int j = 0; j < val.get(i).size(); j++){
+				suma += val.get(i).get(j);
+			}
+			
+			if(i==0){
+				sumaMin=suma;
+				current=0;
+			}else if(suma < sumaMin){
+				sumaMin=suma;
+				current=i;
+			}
+		}
+		
+		String salida = "<" + sumaMin + "> --- ";
+		
+		for(int i = 0; i<val.get(current).size(); i++){
+			salida += val.get(current).get(i) + " ";
+		}
+		
+		return salida;
+	}
+
+
+} 
+

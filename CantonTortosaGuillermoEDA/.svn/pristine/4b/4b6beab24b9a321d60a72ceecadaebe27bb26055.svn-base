@@ -1,0 +1,53 @@
+package org.eda1.practica01.ejercicio02;
+
+import java.util.*;
+
+public class EmpresaProyectos {
+	private String empresa;
+	private ArrayList<ProyectoCiudades> proyectosCiudades;
+	
+	public EmpresaProyectos(){
+		
+	}
+	
+	public EmpresaProyectos(String empr){
+		empresa = empr;
+		proyectosCiudades = new ArrayList<ProyectoCiudades>();
+	}
+	
+	public void addProyectoCiudad(String proyecto, String ciudad){
+		boolean encontrada = false;
+		for(int i=0; i<this.proyectosCiudades.size(); i++){
+			if(this.proyectosCiudades.get(i).getProyecto().equals(proyecto)){
+				this.proyectosCiudades.get(i).addCiudad(ciudad);
+				encontrada = true;
+				break;
+			}
+		}
+		if(!encontrada){
+			this.proyectosCiudades.add(new ProyectoCiudades(proyecto));
+			this.proyectosCiudades.get(this.proyectosCiudades.size()-1).addCiudad(ciudad);
+		}
+	}
+	
+	public void setEmpresa(String empresita){
+		this.empresa = empresita;
+	}
+	
+	public String getEmpresa(){
+		return this.empresa;
+	}
+	
+
+	public ArrayList<ProyectoCiudades> getProyectosCiudades(){
+		return this.proyectosCiudades;
+	}
+	
+	public ProyectoCiudades getProyectoCiudades(int i){
+		return this.proyectosCiudades.get(i);
+	}
+	
+	public int size(){
+		return this.proyectosCiudades.size();
+	}
+}

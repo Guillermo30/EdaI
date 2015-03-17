@@ -1,0 +1,92 @@
+package org.eda1.practica02.ejercicio01;
+
+import org.eda1.estructurasdedatos.*;
+public class DireccionMaquinas implements Comparable<Object> {
+	
+	private String direccion;
+	private BSTree<MaquinaContador> maquinas;
+	
+	public DireccionMaquinas(){
+		
+		this.direccion="";
+		this.maquinas=null;
+		
+	}
+	
+	public DireccionMaquinas(String direccion){
+		
+		this.direccion=direccion;
+		this.maquinas=new BSTree<MaquinaContador>();
+		
+		
+	}
+	
+	public DireccionMaquinas(String direccion,String maquina){
+		
+		this.direccion=direccion;
+		this.maquinas = new BSTree<MaquinaContador>();
+		MaquinaContador nueva= new MaquinaContador(maquina);
+		this.maquinas.add(nueva);
+		
+		
+	}
+	
+	public DireccionMaquinas(String direccion,String maquina,int contador){
+		
+		this.direccion=direccion;
+		this.maquinas = new BSTree<MaquinaContador>();
+		MaquinaContador nueva= new MaquinaContador(maquina,contador);
+		this.maquinas.add(nueva);
+		
+		
+	}
+
+	public void setDireccion(String dir){
+	
+		this.direccion = dir;
+	
+	}
+	
+	public String getDireccion(){
+		return this.direccion;
+	}
+	
+	public BSTree<MaquinaContador>getMaquinas(){
+		return this.maquinas;
+		
+	}
+	
+	public boolean addMaquinas(MaquinaContador mc){
+		
+		return this.maquinas.add(mc);
+		
+	}
+	
+	public boolean addMaquinasWihtFind(MaquinaContador mc){
+		
+		Iterator<MaquinaContador> it = maquinas.iterator();
+		boolean salida=false;
+		while(it.hasNext()){
+			
+			it.next();
+			if(mc.equals(it.current().getMaquina())){
+				
+				return salida=false;
+				
+			}else{
+				
+				this.maquinas.add(mc);
+				salida=true;
+			}
+			
+		}
+		return salida;
+	}
+	
+	@Override
+	public int compareTo(Object nodo) {		
+		return this.direccion.compareTo(((DireccionMaquinas)nodo).getDireccion());
+	}
+
+	
+}

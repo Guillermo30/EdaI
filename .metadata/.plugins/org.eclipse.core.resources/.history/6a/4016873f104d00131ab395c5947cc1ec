@@ -1,0 +1,23 @@
+package org.eda1.practica02.ejercicio01;
+
+import org.eda1.estructurasdedatos.*;
+public class DireccionMaquinas {
+	
+	private String maquina;
+	private BSTree<MaquinaContador> maquinas;
+	
+	public DireccionMaquinas(){
+		
+		this.maquina="";
+		this.maquinas=null;
+		
+	}
+	
+	public DireccionMaquinas(String direccion){
+		
+		this.maquina=direccion;
+		this.maquinas=new BSTree<MaquinaContador>();
+		
+	}
+
+}

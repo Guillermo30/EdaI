@@ -1,0 +1,168 @@
+package org.eda1.practica01.ejercicio02;
+
+import java.io.*;
+import java.util.*;
+
+public class ProcesarDatos {
+	
+	public static ArrayList<EmpresaProyectos> cargarArchivo(String archivo){
+		try {
+			FileReader fr = new FileReader(new File(archivo));
+			BufferedReader br = new BufferedReader(fr);
+			String linea, empr, proy, ciudad;
+			ArrayList<EmpresaProyectos> aux = new ArrayList<EmpresaProyectos>();
+			int encontrada = -1;
+			try {
+				while((linea = br.readLine())!=null){
+					empr = linea.split(" ")[0];
+					proy = linea.split(" ")[1];
+					ciudad = linea.split(" ")[2];
+					if(aux.isEmpty()){
+						aux.add(new EmpresaProyectos(empr));
+						aux.get(0).addProyectoCiudad(proy, ciudad);
+					}else{
+						for(int i=0; i<aux.size(); i++){
+							if(aux.get(i).getEmpresa().equals(empr)){
+								encontrada = i;
+								break;
+							}
+						}
+						if(encontrada == -1){
+							aux.add(new EmpresaProyectos(empr));
+							aux.get(aux.size()-1).addProyectoCiudad(proy, ciudad);
+						}else{
+							aux.get(encontrada).addProyectoCiudad(proy, ciudad);
+							encontrada = -1;
+						}
+					}
+				}
+				br.close();
+				fr.close();
+				return aux;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static void guardarEmpresasProyectosCiudades(ArrayList<EmpresaProyectos> listaEmpresas, String archivo){
+		try {
+			FileWriter fw = new FileWriter(archivo);
+			PrintWriter pw = new PrintWriter(fw);
+			String linea="";
+			if(!listaEmpresas.isEmpty()){
+				for(int i=0; i<listaEmpresas.size(); i++){
+					for(int j=0; j<listaEmpresas.get(i).size(); j++){
+						for(int k=0; k<listaEmpresas.get(i).getProyectosCiudades().size(); k++){
+							linea = listaEmpresas.get(i).getEmpresa()+" "+listaEmpresas.get(i).getProyectoCiudades(j).getProyecto()+" "+listaEmpresas.get(i).getProyectoCiudades(j).getCiudad(k);
+						}
+					}
+					pw.println(linea);
+				}
+				pw.close();
+				fw.close();
+			}else{
+				pw.close();
+				fw.close();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static String devolverEmpresasProyectosCiudades(ArrayList<EmpresaProyectos> listaEmpresas){
+		String cadena="";
+		if(!listaEmpresas.isEmpty()){
+			for(int i=0; i<listaEmpresas.size(); i++){
+				cadena += listaEmpresas.get(i).getEmpresa()+": ";
+				for(int j=0; j<listaEmpresas.get(i).getProyectosCiudades().size(); j++){
+					cadena += listaEmpresas.get(i).getProyectoCiudades(j).getProyecto()+"<";
+					for(int k=0; k<listaEmpresas.get(i).getProyectoCiudades(j).getCiudades().size(); k++){
+						if(k!=listaEmpresas.get(i).getProyectoCiudades(j).getCiudades().size()-1){
+							cadena += listaEmpresas.get(i).getProyectosCiudades().get(j).getCiudad(k)+", ";
+						}else{
+							cadena += listaEmpresas.get(i).getProyectosCiudades().get(j).getCiudad(k)+">";
+						}
+					}
+					if(j!=listaEmpresas.get(i).getProyectosCiudades().size()-1){
+						cadena += "; ";
+					}
+				}
+				cadena += "\n";
+			}
+			return cadena;
+		}else{
+			return cadena;
+		}
+	}
+	
+	public static ArrayList<String> enumerarEmpresasCiudad(ArrayList<EmpresaProyectos> listaEmpresas, String ciudad){
+		ArrayList<String> empresas = new ArrayList<String>();
+//		boolean encontrada = false;
+		for(int i=0; i<listaEmpresas.size(); i++){
+			for(int j=0; j<listaEmpresas.get(i).size(); j++){
+//				if(encontrada)break;
+				for(int k=0; k<listaEmpresas.get(i).getProyectosCiudades().size(); k++){
+					if(listaEmpresas.get(i).getProyectoCiudades(j).getCiudad(k).equals(ciudad)){
+						empresas.add(listaEmpresas.get(i).getEmpresa());
+//						encontrada=true;
+						break;
+					}
+				}
+			}
+		}
+		return empresas;
+	}
+	
+	public static ArrayList<String> enumerarProyectosCiudad(ArrayList<EmpresaProyectos> listaEmpresas, String ciudad){
+		ArrayList<String> proyectos = new ArrayList<String>();
+		for(int i=0; i<listaEmpresas.size(); i++){
+			for(int j=0; j<listaEmpresas.get(i).getProyectosCiudades().size(); j++){
+				for(int k=0; k<listaEmpresas.get(i).getProyectosCiudades().get(j).size(); k++){
+					if(listaEmpresas.get(i).getProyectoCiudades(j).getCiudad(k).equals(ciudad)){
+						proyectos.add(listaEmpresas.get(i).getProyectoCiudades(j).getProyecto());
+						break;
+					}
+				}
+			}
+		}
+		return proyectos;
+	}
+	
+	public static int contarCiudadesEmpresa(ArrayList<EmpresaProyectos> listaEmpresas, String empresa){
+		ArrayList<String> ciudades = new ArrayList<String>();
+		for(int i=0; i<listaEmpresas.size(); i++){
+			if(listaEmpresas.get(i).getEmpresa().equals(empresa)){
+				for(int j=0; j<listaEmpresas.get(i).getProyectosCiudades().size(); j++){
+					for(int k=0; k<listaEmpresas.get(i).getProyectoCiudades(j).getCiudades().size(); k++){
+						if(!ciudades.contains(listaEmpresas.get(i).getProyectoCiudades(j).getCiudad(k))){
+							ciudades.add(listaEmpresas.get(i).getProyectoCiudades(j).getCiudad(k));
+						}
+					}
+				}
+			}
+		}
+		return ciudades.size();
+	}
+	
+	public static ArrayList<String> enumerarCiudadesProyectoEmpresa(ArrayList<EmpresaProyectos> listaEmpresas, String proyecto, String empresa){
+		for(int i=0; i<listaEmpresas.size(); i++){
+			if(listaEmpresas.get(i).getEmpresa().equals(empresa)){
+				for(int j=0; j<listaEmpresas.get(i).getProyectosCiudades().size(); j++){
+					if(listaEmpresas.get(i).getProyectoCiudades(j).getProyecto().equals(proyecto)){
+						return listaEmpresas.get(i).getProyectoCiudades(j).getCiudades();
+					}
+				}
+			}
+		}
+		return null;
+	}
+}

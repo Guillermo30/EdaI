@@ -1,0 +1,252 @@
+package org.eda1.practica02.ejercicio01;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
+import org.eda1.estructurasdedatos.BSTree;
+import org.eda1.estructurasdedatos.Iterator;
+
+public class ProcesarDirecciones {
+
+	static BSTree<DireccionMaquinas> treeDirecciones;
+
+	// consturctores
+	public ProcesarDirecciones() {
+		this.treeDirecciones = new BSTree<DireccionMaquinas>();
+	}
+
+	public ProcesarDirecciones(BSTree<DireccionMaquinas> treeDirecciones){
+		
+		this.treeDirecciones = new BSTree<DireccionMaquinas>();
+		Iterator<DireccionMaquinas> ite = treeDirecciones.iterator();
+		
+		while(ite.hasNext()){
+			this.treeDirecciones.add(ite.current());
+		}
+	}
+
+
+	public BSTree<DireccionMaquinas> cargarArchivo(String archivo){
+		
+		ProcesarDirecciones salida = new ProcesarDirecciones();
+		
+		try {
+			
+			FileReader fi = new FileReader(archivo);
+			BufferedReader br = new BufferedReader(fi);
+			String linea = br.readLine();
+			
+			while(linea != null){
+				salida.addDireccionMaquinaWithFind(linea.split(" ")[0], linea.split(" ")[1]);
+				linea = br.readLine();
+			}
+			br.close();
+			fi.close();
+			
+		} catch (IOException e) {
+			
+			System.out.println("Error de carga de fichero");
+			e.printStackTrace();
+			
+		}
+		
+		this.treeDirecciones = salida.treeDirecciones;
+		return salida.treeDirecciones;
+		
+	}
+	
+	public void guardarDireccionesIncidencias(String archivo){
+		
+		try {
+			
+			FileWriter fi = new FileWriter(archivo);
+			PrintWriter pw = new PrintWriter(fi);
+			String resultado ="[";
+			Iterator<DireccionMaquinas> iteDir = this.treeDirecciones.iterator();
+			
+			while(iteDir.hasNext()){
+				resultado += iteDir.next().toString();
+				if(iteDir.hasNext())resultado += "\n";
+			}
+			
+			resultado += "]";
+			pw.print(resultado);
+			fi.close();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	
+	/*
+	// cargar archivo
+	public BSTree<DireccionMaquinas> cargarArchivo(String archivo) {
+		treeDirecciones.clear();
+		try {
+			leerArchivo(archivo);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return treeDirecciones;
+	}
+
+	// leer achivo
+	private static void leerArchivo(String stringArchivoEntrada)
+			throws FileNotFoundException {
+
+		BufferedReader br = new BufferedReader(new FileReader(new File(
+				stringArchivoEntrada)));
+		String linea, ip, maquina;
+		String[] par;
+		DireccionMaquinas maquinaActual;
+
+		try {
+			// Leemos el fichero
+			while ((linea = br.readLine()) != null) {
+				par = linea.split(" ");
+				ip = par[0];
+				maquina = par[1];
+				// Comprobamos si el par ip / maquina existe. Si no existe lo
+				// creamos
+				if ((maquinaActual = compruebaPar(ip, maquina)) == null) { // Lo
+																			// añadimos
+					if (!buscaIP(ip)) { // Si no existe esa ip la agregamos
+										// junto con su maquina
+						DireccionMaquinas temp = new DireccionMaquinas(ip,maquina);
+						treeDirecciones.add(temp);
+					} else
+						// Existe pero no tiene esa maquina. Añadirle la
+						// maquina
+						addMaquina(ip, maquina);
+				} else
+					// Si existe, aumentamos su contador
+					maquinaActual.aumentaContador(maquina);
+			}
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// guaarda direcciones
+
+	public void guardarDireccionesIncidencias(String archivo)
+			throws FileNotFoundException,IOException {
+
+		BSTree<MaquinaContador> maquinas;
+		String resultado = "";
+		Iterator<DireccionMaquinas> iterador = treeDirecciones.iterator();
+		DireccionMaquinas actual;
+
+		while (iterador.hasNext()) {// Recorremos todas sus maquinas
+			
+			actual = iterador.next();
+			resultado += "[(" + actual.getDireccion() + ", ["; // Leemos su ip
+			maquinas = actual.getMaquinas(); // Leemos sus maquinas
+			
+			for (int j = 0; j < maquinas.size(); j++) {
+				if (j > 0)
+					resultado += "\n"; // Si no es la primera fila insertamos un
+		
+				// salto de linea
+				resultado += "[" + maquinas. + ", "; // Leemos cada
+															// maquina
+				resultado += actual.devuelveContador(maquinas.get(j)) + "]"; // Leemos
+																				// su
+																				// contador
+			}
+			resultado += "])]\n";
+		}
+		escribeCadenaEnFichero(resultado, archivo);
+	}
+	
+	*/
+	public boolean addDireccionMaquina(String direccion, String maquina){
+		
+		Iterator<DireccionMaquinas> ite = this.treeDirecciones.iterator();
+		while(ite.hasNext()){
+			
+			DireccionMaquinas aux = ite.next();
+			if(aux.equals(new DireccionMaquinas(direccion)))return aux.addMaquinas(new MaquinaContador(maquina));
+		}
+		
+		return this.treeDirecciones.add(new DireccionMaquinas(direccion, maquina));
+	}
+	
+	
+	public boolean addDireccionMaquinaWithFind(String direccion, String maquina){
+		
+		DireccionMaquinas aux = this.treeDirecciones.find(new DireccionMaquinas(direccion));
+		
+		if(aux != null){
+			
+			return aux.addMaquinasWithFind(new MaquinaContador(maquina));
+			
+		}else{
+			
+			return this.treeDirecciones.add(new DireccionMaquinas(direccion, maquina));
+			
+		}
+	}
+	
+	
+	
+	public int maquinasConContador(int contador){
+		int resultado = 0;
+		Iterator<DireccionMaquinas> iteDir = this.treeDirecciones.iterator();
+		Iterator<MaquinaContador> iteMaq;
+		while(iteDir.hasNext()){
+			iteMaq = iteDir.next().getMaquinas().iterator();
+			while(iteMaq.hasNext()){
+				if(iteMaq.next().getContador()==contador)resultado ++;
+			}
+		}
+		return resultado;
+	}
+	
+	
+	
+	public String direccionMaquinasConContador(int contador){
+		String resultado = "";
+		Iterator<DireccionMaquinas> ite = this.treeDirecciones.iterator();
+		Iterator<MaquinaContador> iteMaq;
+		while(ite.hasNext()){
+			DireccionMaquinas auxDir = ite.next();
+			iteMaq = auxDir.getMaquinas().iterator();
+			while(iteMaq.hasNext()){
+				MaquinaContador auxMaq = iteMaq.next();
+				if(auxMaq.getContador()==contador){
+					resultado +="("+auxDir.getDireccion()+", "+auxMaq.getMaquina()+")\n";
+				}
+			}
+		}
+		return resultado;
+	}
+	
+	
+	
+	public int contadorDeDireccionMaquina(String direccion, String maquina){
+		DireccionMaquinas auxDir = this.treeDirecciones.find(new DireccionMaquinas(direccion));
+		if(auxDir != null){
+			MaquinaContador auxMaq = auxDir.getMaquinas().find(new MaquinaContador(maquina));
+			if(auxMaq != null){
+				return auxMaq.getContador();
+			}else{
+				return 0;
+			}
+		}else{
+			return 0;
+		}
+	}
+
+}

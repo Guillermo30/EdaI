@@ -1,0 +1,108 @@
+package org.eda1.actividad01.serializacionED;
+
+import java.io.Serializable;
+
+public class CiudadBarrios implements Serializable {
+	private String nombre;
+	private double latitud;
+	private double altitud;
+	private LinkedList<String> barrios;
+	/**
+	 * Constructor de la clase CiudadBarrios
+	 * inicializa todos sus atributos a nulos
+	 */
+	public CiudadBarrios(){
+		this.setNombre(null);
+		this.setLatitud(0.0);
+		this.setAltitud(0.0);
+		this.setBarrios(null);
+	}
+	/**
+	 * Constructor de la clase CiudadBarrios
+	 * @param nombre String que contendra el nombre de la nueva ciudad
+	 * @param latitud double que contendra la latitud de la nueva ciudad
+	 * @param altitud double que contendra la altitud de la nueva ciudad
+	 */
+	public CiudadBarrios(String nombre, double latitud, double altitud){
+		this.setNombre(nombre);
+		this.setLatitud(latitud);
+		this.setAltitud(altitud);
+		this.setBarrios(null);
+	}
+	/**
+	 * Constructor de la clase CiudadBarrios
+	 * @param nombre String que contendra el nombre de la nueva ciudad
+	 * @param latitud double que contendra la latitud de la nueva ciudad
+	 * @param altitud double que contendra la altitud de la nueva ciudad
+	 * @param barrios LinkedList que contendra la lista de barrios de la nueva ciudad
+	 */
+	public CiudadBarrios(String nombre, double latitud, double altitud, LinkedList<String> barrios){
+		this.setNombre(nombre);
+		this.setLatitud(latitud);
+		this.setAltitud(altitud);
+		this.setBarrios(barrios);
+	}
+	/**
+	 * Permite consultar el nombre de la ciudad
+	 * @return String con el nombre de la ciudad
+	 */
+	public String getNombre() {
+		return nombre;
+	}
+	/**
+	 * Permite modificar el nombre de la ciudad
+	 * @param nombre String que contiene el nuevo nombre de la ciudad
+	 */
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	/**
+	 * Permite consultar la latitud de la ciudad
+	 * @return double con la latitud de la ciudad
+	 */
+	public double getLatitud() {
+		return latitud;
+	}
+	/**
+	 * Permite modificar la latitud de la ciudad
+	 * @param latitud double con la nueva latitud
+	 */
+	public void setLatitud(double latitud) {
+		this.latitud = latitud;
+	}
+	/**
+	 * Permite consultar la altitud de la ciudad
+	 * @return double que conteiene la altitud de la ciudad
+	 */
+	public double getAltitud() {
+		return altitud;
+	}
+	/**
+	 * Permite modificar la altitud de la ciudad
+	 * @param altitud double que contiene la nueva altitud de la ciudad
+	 */
+	public void setAltitud(double altitud) {
+		this.altitud = altitud;
+	}
+	/**
+	 * Permite consultar lista de barrios
+	 * @return LinkedList<Strin> que contiene la lista de barrios de la ciudad
+	 */
+	public LinkedList<String> getBarrios() {
+		return barrios;
+	}
+	/**
+	 * Permite modificar la lista de barrios de la ciudad
+	 * @param barrios LinkedList<String> que contiene la nueva lista de barrios
+	 */
+	public void setBarrios(LinkedList<String> barrios) {
+		this.barrios = barrios;
+	}
+	/**
+	 * Permite agregar un nuevo barrio a la lista
+	 * @param barrio String que contiene el nombre del nuevo barrio
+	 */
+	public void addBarrio(String barrio){
+		this.barrios.add(barrio);
+	}
+}

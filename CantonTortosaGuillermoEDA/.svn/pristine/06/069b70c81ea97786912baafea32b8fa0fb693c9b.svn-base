@@ -1,0 +1,207 @@
+package org.eda1.actividadesSeptiembre.actividad04;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+public class SimilarWords {
+
+	public SimilarWords(){
+		
+	}
+	
+	public List<String> readWords(String stringArchivoEntrada) {
+		// TODO Auto-generated method stub
+		List<String> palabras = new LinkedList<String>();
+		
+		try {
+			FileReader fr = new FileReader(stringArchivoEntrada);
+			BufferedReader bf = new BufferedReader(fr);
+			
+			
+			while(bf.ready()){
+				palabras.add(bf.readLine());
+			}
+			fr.close();
+			bf.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return palabras;
+	}
+	//misma longitud y diferencia en un caracter
+	private static boolean oneCharOff(String word1,String word2){
+		ArrayList<Boolean> comprobacion = new ArrayList<Boolean>();
+		if(word1.length()== word2.length()){
+			for(int i=0; i<word1.length();i++){
+				if(word1.charAt(i)==word2.charAt(i)){
+					comprobacion.add(true);
+				}else{
+					comprobacion.add(false);
+				}
+			}
+			//comprueba cuantos false asi vemos si son diferentes;
+			int com =0;
+			for(int j=0;j< comprobacion.size();j++){
+				if(comprobacion.get(j)== false){
+					com++;
+				}
+			}
+			if(com ==1){
+				return true;
+			}else{
+				return false;
+			}
+			
+		}else{
+			return false;
+		}
+		
+	}
+
+	//actualiza el mapa
+	private static <KeyType> void update(Map<KeyType,List<String>> m,KeyType key,String value){
+		
+		List<String> aux = new LinkedList<String>();
+		
+		aux = m.get(key);
+		aux.add(value);
+		m.put(key, aux);
+		
+	}
+	public Map<Integer, Integer> computeDistributionOfDictionary(
+			List<String> words){ 
+
+			Iterator<String> it = words.iterator();
+			int inicializacionKey = 2;
+			
+			Map<Integer, Integer> salida = new HashMap<Integer, Integer>();
+			while(it.hasNext()){
+				int inicializacionValue = 0;
+				salida.put(inicializacionKey, inicializacionValue);
+				for(int i=0 ; i<words.size();i++){
+					for(int j=0;j<words.size();j++){
+						if(oneCharOff(words.get(i),words.get(j))){
+							salida.put(inicializacionKey, inicializacionValue++);
+						}
+					}
+				}
+				it.next();
+				inicializacionKey++;
+			}
+			
+			
+		
+		return salida;
+	}
+	//Calcula un mapa en el que las claves son palabras y valores listas de parablas de difierern
+	//un unico caracate de la clave correspondiente.Utiliza un algoritomo cuadratico.
+	public Map<String, List<String>> computeSimilarWordsBruteForce(
+			List<String> words) {
+			
+			Map<String, List<String>> salida = new HashMap<String, List<String>>();
+				
+				for(int i=0 ; i<words.size();i++){
+					salida.put(words.get(i), null);
+					for(int j=0;j<words.size();j++){
+						if(oneCharOff(words.get(i),words.get(j))){
+							update(salida,words.get(i),words.get(j));	
+						}
+					}	
+				}	
+		return salida;
+	}
+
+	public Map<String, List<String>> computeSimilarWordsImproved(
+			List<String> words) {
+		Map<String, List<String>> salida = new HashMap<String, List<String>>();
+		Map<Integer,List<String>> aux = new HashMap<Integer, List<String>>();
+		List<String> lista = new LinkedList<String>();
+		
+		//creamos el mapa auxiliar para obtener palabas de la misma longitud
+		
+		for(int i=0; i<words.size();i++){
+			lista.clear();
+			if(aux.containsKey(words.get(i).length())){
+				update(aux,words.get(i).length(),words.get(i));
+			}else{
+				lista.add(words.get(i));
+				aux.put(words.get(i).length(),lista);
+			}
+		}
+		//trabajamos sobre gurpos de palabras con la misma longitud
+		List<String> listilla = new LinkedList<String>();
+		List<String> listaSalida = new LinkedList<String>();
+		
+		for(int j=0;j < words.size();j++){
+			listilla.clear();
+			listilla = aux.get(words.get(j).length());
+			listaSalida.clear();
+			for(int k=0;k<aux.get(words.get(j).length()).size();k++){
+				
+				if(!salida.containsKey(words.get(j))){
+					if(oneCharOff(words.get(j),listilla.get(k))){
+						listaSalida.add(listilla.get(k));
+						salida.put(words.get(j),listaSalida);
+						listilla.remove(listilla.get(k));
+						aux.put(words.get(j).length(), listilla);
+					}
+				}
+			}
+		}
+		
+		return salida;
+	}
+
+	public Map<String, List<String>> computeSimilarWords(List<String> words) {
+		Map<String, List<String>> salida = new HashMap<String, List<String>>();
+		
+		List<String> lista = new LinkedList<String>();
+		Map<Integer,List<String>> aux = new HashMap<Integer, List<String>>();
+		//creamos el mapa auxiliar para obtener palabas de la misma longitud
+		
+		for(int i=0; i<words.size();i++){
+			lista.clear();
+			if(aux.containsKey(words.get(i).length())){
+				update(aux,words.get(i).length(),words.get(i));
+			}else{
+				lista.add(words.get(i));
+				aux.put(words.get(i).length(),lista);
+			}
+		}
+		
+		return salida;
+	}
+
+	public List<String> findMostChangeable(
+			Map<String, List<String>> mapSimilarWords) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String showMostChangeables(List<String> mostChangeable,
+			Map<String, List<String>> mapSimilarWords) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Map<String, Integer> findHighChangeables(
+			Map<String, List<String>> mapSimilarWords, int i) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

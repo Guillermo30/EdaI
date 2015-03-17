@@ -1,0 +1,8 @@
+int m = 12, n = 14;
+double a = 3, b = 2, hypotenuse;
+
+if (n <= 5)
+	n = 2*m;
+else
+	n = m * m;
+hypotenuse = sqrt(a*a + b*b);

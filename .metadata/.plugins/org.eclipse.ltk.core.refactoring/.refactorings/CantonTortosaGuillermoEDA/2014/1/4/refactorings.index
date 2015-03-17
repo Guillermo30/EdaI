@@ -1,0 +1,26 @@
+1390211834305	Rename local variable 'Key'
+1390212317365	Rename local variable 'pila'
+1390212354348	Rename local variable 'ite'
+1390212423881	Rename local variable 'cola'
+1390213251323	Rename local variable 'ite'
+1390213275675	Rename local variable 'v'
+1390217562013	Rename local variable 'eI'
+1390218402599	Rename local variable 'ite'
+1390294807553	Rename local variable 'typeOfGraph'
+1390294844027	Rename local variable 'nVertices'
+1390294864878	Rename local variable 'nEdges'
+1390294940708	Rename local variable 'weight'
+1390297185928	Delete element
+1390299168178	Delete element
+1390299882573	Rename local variable 's3'
+1390299905995	Rename local variable 's1'
+1390299926524	Rename local variable 's2'
+1390300566243	Delete element
+1390300571444	Delete element
+1390300579645	Delete element
+1390300586664	Delete element
+1390300591105	Delete element
+1390304328975	Rename field 'result'
+1390304403002	Rename field 'visited'
+1390304758131	Rename local variable 'str'
+1390311794592	Copy method

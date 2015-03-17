@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;AllTests.java&apos; to &apos;CantonTortosaGuillermoEDA/test/org.eda1.alltests&apos;&#x0D;&#x0A;- Original project: &apos;practicaseda2014&apos;&#x0D;&#x0A;- Destination element: &apos;CantonTortosaGuillermoEDA/test/org.eda1.alltests&apos;&#x0D;&#x0A;- Original element: &apos;AllTests.java&apos;" description="Copy file" destination="=CantonTortosaGuillermoEDA/test&lt;org.eda1.alltests" element1="trunk/PracticasEDAI2014/Practicas/AllTests.java" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1389792936988" units="0" version="1.0"/>
+</session>
